@@ -1,16 +1,34 @@
 # Hz Loading Screen
 
-A customizable and easy-to-use Flutter package for displaying overlay loading screens that can be accessed from anywhere in your app. Perfect for showing loading states during network requests, file operations, or any time-consuming tasks.
+A highly customizable and feature-rich Flutter package for displaying overlay loading screens with advanced capabilities like auto-dismiss, animations, blur effects, and flexible positioning. Access loading screens from anywhere in your app without context dependencies.
 
-## Features
+## ✨ Features
 
-- **Global Access**: Show/hide loading screens from anywhere in your app without context
-- **Highly Customizable**: Customize colors, text, animations, and layout
-- **Progress Support**: Display progress indicators with percentage or custom builders
-- **Timer-based Close**: Automatic close button that appears after a specified duration
-- **Multiple Styles**: Support for circular progress, linear progress, and custom indicators
-- **Overlay System**: Non-intrusive overlay that doesn't affect your app's navigation
-- **Material Design**: Built with Material Design principles in mind
+### Core Functionality
+- **🌐 Global Access**: Show/hide loading screens from anywhere without context
+- **⚙️ EasyLoading-style Configuration**: Instance-based global configuration system
+- **📱 Overlay System**: Non-intrusive overlay that preserves navigation state
+- **🎯 Auto-dismiss**: Smart auto-hide on progress completion or timeout
+
+### Visual Customization
+- **🎨 Highly Customizable**: Colors, text, decorations, blur effects, and positioning
+- **✨ 8 Animation Types**: Fade, scale, slide, rotation animations for entrance/exit
+- **📍 Flexible Positioning**: Center, top, bottom, or custom positioning with alignment
+- **🌫️ Blur & Backdrop Effects**: Background blur and color filter effects
+- **📏 Layout Controls**: Margin, max width/height constraints for responsive design
+
+### Progress & Interaction
+- **📊 Dual Progress Modes**: Circular and linear progress indicators
+- **⏱️ Timer-based Close**: Auto-appearing close button after specified duration
+- **🚀 Smart Auto-dismiss**: Automatic hiding on completion with optional delay
+- **🔒 Safety Timeouts**: Maximum duration enforcement to prevent infinite loading
+- **📞 Callback Support**: onClosed and onAutoHide event handlers
+
+### Developer Experience
+- **📖 Comprehensive Documentation**: Detailed API docs and examples
+- **🧪 Fully Tested**: 35+ comprehensive tests covering all features
+- **🎮 Interactive Showcase**: Complete demo app with live controls
+- **💎 Material Design**: Built with Material Design principles
 
 ## Screenshots
 
@@ -63,7 +81,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-### Global Configuration (Optional)
+### Global Configuration (EasyLoading-style)
 
 Set default values that will be applied to all loading screens, similar to EasyLoading's instance configuration:
 
@@ -73,7 +91,7 @@ import 'package:hz_loading_screen/hz_loading_screen.dart';
 
 void main() {
   // Configure global defaults (optional)
-  HzLoadingScreen.instance
+  HzLoading.instance
     ..displayDuration = const Duration(seconds: 3)
     ..materialColor = Colors.black.withAlpha(120)
     ..progressColor = Colors.blue
@@ -84,6 +102,13 @@ void main() {
       color: Colors.black87,
       fontWeight: FontWeight.w500,
     )
+    ..showDecoration = true
+    ..useLinearProgress = false
+    ..entranceAnimation = HzLoadingAnimation.fade
+    ..exitAnimation = HzLoadingAnimation.fade
+    ..autoHideOnComplete = false
+    ..position = HzLoadingPosition.center
+    ..enableBackdropBlur = false
     ..decoration = BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
@@ -104,17 +129,18 @@ With global configuration, you can:
 
 ```dart
 // Use all defaults
-HzLoadingScreen.show();
+HzLoading.show();
 
 // Use defaults with custom text
-HzLoadingScreen.show(HzLoadingData.withDefaults(
+HzLoading.show(HzLoadingData.withDefaults(
   text: 'Custom message',
 ));
 
 // Override specific defaults
-HzLoadingScreen.show(HzLoadingData.withDefaults(
+HzLoading.show(HzLoadingData.withDefaults(
   text: 'Downloading...',
   progressColor: Colors.green, // Override just the color
+  entranceAnimation: HzLoadingAnimation.scale,
 ));
 ```
 
@@ -124,7 +150,7 @@ HzLoadingScreen.show(HzLoadingData.withDefaults(
 
 ```dart
 // Show loading
-HzLoadingScreen.show(HzLoadingData(
+HzLoading.show(HzLoadingData(
   text: 'Loading, please wait...',
   withTimer: false,
 ));
@@ -133,7 +159,58 @@ HzLoadingScreen.show(HzLoadingData(
 await Future.delayed(const Duration(seconds: 3));
 
 // Hide loading
-HzLoadingScreen.hide();
+HzLoading.hide();
+```
+
+### Auto-dismiss with Progress
+
+```dart
+ValueNotifier<int> progress = ValueNotifier<int>(0);
+
+HzLoading.show(HzLoadingData(
+  text: 'Processing...',
+  progress: progress,
+  autoHideOnComplete: true,
+  autoHideDelay: const Duration(milliseconds: 500),
+  onAutoHide: () => print('Auto-completed!'),
+));
+
+// Simulate progress - will auto-hide at 100%
+for (int i = 0; i <= 100; i += 10) {
+  await Future.delayed(const Duration(milliseconds: 200));
+  progress.value = i;
+}
+// No need to call HzLoading.hide() - it auto-hides!
+
+progress.dispose();
+```
+
+### Animated Loading with Positioning
+
+```dart
+HzLoading.show(HzLoadingData(
+  text: 'Uploading...',
+  entranceAnimation: HzLoadingAnimation.scale,
+  exitAnimation: HzLoadingAnimation.fade,
+  position: HzLoadingPosition.top,
+  margin: const EdgeInsets.all(20),
+  maxWidth: 300,
+));
+```
+
+### Blur & Backdrop Effects
+
+```dart
+HzLoading.show(HzLoadingData(
+  text: 'Processing...',
+  enableBackdropBlur: true,
+  backdropBlurSigma: 10.0,
+  enableBackdropFilter: true,
+  backdropColorFilter: ColorFilter.mode(
+    Colors.blue.withOpacity(0.2),
+    BlendMode.overlay,
+  ),
+));
 ```
 
 ### Custom Styled Loading
@@ -155,25 +232,35 @@ HzLoadingScreen.show(HzLoadingData(
 ));
 ```
 
-### Loading with Progress
+### Loading with Linear Progress
 
 ```dart
 ValueNotifier<int> progress = ValueNotifier<int>(0);
 
-HzLoadingScreen.show(HzLoadingData(
+HzLoading.show(HzLoadingData(
   text: 'Downloading...',
   progress: progress,
+  useLinearProgress: true, // Use linear instead of circular
   withTimer: false,
 ));
 
-// Simulate progress
 for (int i = 0; i <= 100; i += 10) {
   await Future.delayed(const Duration(milliseconds: 200));
   progress.value = i;
 }
 
-HzLoadingScreen.hide();
+HzLoading.hide();
 progress.dispose();
+```
+
+### Safety Timeout
+
+```dart
+HzLoading.show(HzLoadingData(
+  text: 'Processing...',
+  maxDuration: const Duration(minutes: 2), // Force hide after 2 minutes
+  onAutoHide: () => print('Operation timed out'),
+));
 ```
 
 ### Custom Progress Builder
@@ -181,7 +268,7 @@ progress.dispose();
 ```dart
 ValueNotifier<int> progress = ValueNotifier<int>(0);
 
-HzLoadingScreen.show(HzLoadingData(
+HzLoading.show(HzLoadingData(
   text: 'Processing files...',
   progress: progress,
   progressBuilder: (progressValue) {
@@ -207,7 +294,7 @@ HzLoadingScreen.show(HzLoadingData(
 ### Timer-based Close Button
 
 ```dart
-HzLoadingScreen.show(HzLoadingData(
+HzLoading.show(HzLoadingData(
   text: 'Loading...',
   withTimer: true,
   duration: const Duration(seconds: 3), // Close button appears after 3 seconds
@@ -217,9 +304,63 @@ HzLoadingScreen.show(HzLoadingData(
 ));
 ```
 
+## 🎮 Animation Types
+
+The package includes 8 built-in animation types:
+
+```dart
+enum HzLoadingAnimation {
+  fade,        // Simple opacity transition
+  scale,       // Scales up from center
+  slideUp,     // Slides in from bottom
+  slideDown,   // Slides in from top
+  slideLeft,   // Slides in from right
+  slideRight,  // Slides in from left
+  rotation,    // Rotates while fading
+  none,        // No animation
+}
+
+// Usage
+HzLoading.show(HzLoadingData(
+  text: 'Animated Loading!',
+  entranceAnimation: HzLoadingAnimation.scale,
+  exitAnimation: HzLoadingAnimation.fade,
+  animationDuration: const Duration(milliseconds: 400),
+  animationCurve: Curves.easeOutBack,
+));
+```
+
+## 📍 Positioning & Layout
+
+Control exactly where and how your loading screen appears:
+
+```dart
+enum HzLoadingPosition {
+  center,  // Center of screen (default)
+  top,     // Top of screen
+  bottom,  // Bottom of screen
+  custom,  // Use customAlignment
+}
+
+// Positioning examples
+HzLoading.show(HzLoadingData(
+  text: 'Top positioned',
+  position: HzLoadingPosition.top,
+  margin: const EdgeInsets.all(20),
+));
+
+HzLoading.show(HzLoadingData(
+  text: 'Custom positioned',
+  position: HzLoadingPosition.custom,
+  customAlignment: Alignment.topRight,
+  maxWidth: 250,
+  maxHeight: 150,
+));
+```
+
 ## API Reference
 
-### HzLoadingScreen
+### HzLoading
 
 The main class for controlling the loading screen.
 
@@ -229,11 +370,15 @@ The main class for controlling the loading screen.
 - `hide()` - Hide the loading screen
 - `isVisible` - Get current visibility state
 
+#### Static Properties
+
+- `instance` - Access to global configuration (HzLoadingConfig.instance)
+
 ### HzLoadingData
 
 Configuration class for customizing the loading screen appearance and behavior.
 
-#### Properties
+#### Core Properties
 
 | Property                   | Type                       | Description                           | Default                       |
 | -------------------------- | -------------------------- | ------------------------------------- | ----------------------------- |
@@ -244,17 +389,66 @@ Configuration class for customizing the loading screen appearance and behavior.
 | `text`                     | `String?`                  | Loading text to display               | `null`                        |
 | `textBuilder`              | `Widget Function(String)?` | Custom text widget builder            | `null`                        |
 | `progress`                 | `ValueListenable<int>?`    | Progress value notifier (0-100)       | `null`                        |
-| `materialColor`            | `Color?`                   | Background overlay color              | `Colors.black.withAlpha(150)` |
-| `padding`                  | `EdgeInsetsGeometry?`      | Container padding                     | `EdgeInsets.all(16)`          |
-| `decoration`               | `BoxDecoration?`           | Container decoration                  | Auto-generated                |
-| `progressIndicatorBuilder` | `Widget Function()?`       | Custom progress indicator             | `CircularProgressIndicator`   |
-| `progressColor`            | `Color?`                   | Progress indicator color              | `Colors.blue`                 |
-| `closeIcon`                | `IconData?`                | Close button icon                     | `Icons.close`                 |
-| `closeIconColor`           | `Color?`                   | Close button color                    | `Colors.blue`                 |
+
+#### Visual Styling
+
+| Property                   | Type                    | Description                           | Default                       |
+| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
+| `materialColor`            | `Color?`                | Background overlay color              | `Colors.black.withAlpha(150)` |
+| `padding`                  | `EdgeInsetsGeometry?`   | Container padding                     | `EdgeInsets.all(16)`          |
+| `decoration`               | `BoxDecoration?`        | Container decoration                  | Auto-generated                |
+| `progressColor`            | `Color?`                | Progress indicator color              | `Colors.blue`                 |
+| `closeIcon`                | `IconData?`             | Close button icon                     | `Icons.close`                 |
+| `closeIconColor`           | `Color?`                | Close button color                    | `Colors.blue`                 |
+| `textStyle`                | `TextStyle?`            | Text styling                          | Default style                 |
+| `progressTextStyle`        | `TextStyle?`            | Progress text styling                 | Default style                 |
+| `showProgressIndicator`    | `bool?`                 | Show/hide progress indicator          | `true`                        |
+| `showDecoration`           | `bool?`                 | Show decoration without text          | `false`                       |
+| `useLinearProgress`        | `bool?`                 | Use linear instead of circular        | `false`                       |
+
+#### Animation Properties
+
+| Property                   | Type                    | Description                           | Default                       |
+| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
+| `entranceAnimation`        | `HzLoadingAnimation?`   | Entry animation type                  | `HzLoadingAnimation.fade`     |
+| `exitAnimation`            | `HzLoadingAnimation?`   | Exit animation type                   | Same as entrance              |
+| `animationDuration`        | `Duration?`             | Animation duration                    | `250ms`                       |
+| `animationCurve`           | `Curve?`                | Animation easing curve                | `Curves.easeInOut`            |
+
+#### Backdrop Effects
+
+| Property                   | Type                    | Description                           | Default                       |
+| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
+| `enableBackdropBlur`       | `bool?`                 | Apply background blur                 | `false`                       |
+| `backdropBlurSigma`        | `double?`               | Blur intensity (1.0-20.0)            | `5.0`                         |
+| `enableBackdropFilter`     | `bool?`                 | Apply color filter to background      | `false`                       |
+| `backdropColorFilter`      | `ColorFilter?`          | Color filter for background           | `null`                        |
+
+#### Position & Layout
+
+| Property                   | Type                    | Description                           | Default                       |
+| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
+| `position`                 | `HzLoadingPosition?`    | Screen position                       | `HzLoadingPosition.center`    |
+| `customAlignment`          | `Alignment?`            | Custom alignment (when position=custom)| `Alignment.center`           |
+| `margin`                   | `EdgeInsets?`           | Margin around content                 | `null`                        |
+| `maxWidth`                 | `double?`               | Maximum width constraint              | `null`                        |
+| `maxHeight`                | `double?`               | Maximum height constraint             | `null`                        |
+
+#### Auto-dismiss Features
+
+| Property                   | Type                    | Description                           | Default                       |
+| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
+| `autoHideOnComplete`       | `bool?`                 | Auto-hide when progress reaches 100%  | `false`                       |
+| `autoHideDelay`            | `Duration?`             | Delay before hiding after completion  | `null`                        |
+| `onAutoHide`               | `Function?`             | Callback when auto-hidden             | `null`                        |
+| `maxDuration`              | `Duration?`             | Force hide after timeout              | `null`                        |
+
+#### Custom Builders
+
+| Property                   | Type                       | Description                           | Default                       |
+| -------------------------- | -------------------------- | ------------------------------------- | ----------------------------- |
+| `progressIndicatorBuilder` | `Widget Function()?`       | Custom progress indicator (supports flutter_spinkit) | `CircularProgressIndicator`   |
 | `progressBuilder`          | `Widget Function(int)?`    | Custom progress display               | Default percentage text       |
-| `textStyle`                | `TextStyle?`               | Text styling                          | Default style                 |
-| `progressTextStyle`        | `TextStyle?`               | Progress text styling                 | Default style                 |
-| `showProgressIndicator`    | `bool?`                    | Show/hide progress indicator          | `true`                        |
 
 #### Factory Methods
 
@@ -269,31 +463,52 @@ Global configuration class for setting default values that apply to all loading 
 
 - `instance` - Get the singleton configuration instance
 
-#### Configuration Properties
+#### All Configuration Properties
 
-| Property                   | Type                       | Description                           | Default |
-| -------------------------- | -------------------------- | ------------------------------------- | ------- |
-| `displayDuration`          | `Duration?`                | Default timer duration                | `null`  |
-| `defaultText`              | `String?`                  | Default loading text                  | `null`  |
-| `materialColor`            | `Color?`                   | Default background overlay color      | `null`  |
-| `padding`                  | `EdgeInsetsGeometry?`      | Default container padding             | `null`  |
-| `decoration`               | `BoxDecoration?`           | Default container decoration          | `null`  |
-| `progressColor`            | `Color?`                   | Default progress indicator color      | `null`  |
-| `textStyle`                | `TextStyle?`               | Default text styling                  | `null`  |
-| `progressTextStyle`        | `TextStyle?`               | Default progress text styling         | `null`  |
-| `closeIcon`                | `IconData?`                | Default close button icon             | `null`  |
-| `closeIconColor`           | `Color?`                   | Default close button color            | `null`  |
-| `showProgressIndicator`    | `bool?`                    | Default progress indicator visibility | `null`  |
-| `withTimer`                | `bool?`                    | Default timer behavior                | `null`  |
-| `onClosed`                 | `Function?`                | Default close callback                | `null`  |
-| `progressIndicatorBuilder` | `Widget Function()?`       | Default progress indicator builder    | `null`  |
-| `textBuilder`              | `Widget Function(String)?` | Default text builder                  | `null`  |
-| `progressBuilder`          | `Widget Function(int)?`    | Default progress builder              | `null`  |
+The configuration class supports all the same properties as `HzLoadingData`, allowing you to set global defaults for:
+
+- **Core properties**: `displayDuration`, `defaultText`, `withTimer`, `onClosed`
+- **Visual styling**: `materialColor`, `padding`, `decoration`, `progressColor`, `textStyle`, etc.
+- **Animation settings**: `entranceAnimation`, `exitAnimation`, `animationDuration`, `animationCurve`
+- **Backdrop effects**: `enableBackdropBlur`, `backdropBlurSigma`, `enableBackdropFilter`, `backdropColorFilter`
+- **Position & layout**: `position`, `customAlignment`, `margin`, `maxWidth`, `maxHeight`
+- **Auto-dismiss**: `autoHideOnComplete`, `autoHideDelay`, `onAutoHide`, `maxDuration`
+- **Custom builders**: `progressIndicatorBuilder`, `textBuilder`, `progressBuilder`
 
 #### Configuration Methods
 
 - `reset()` - Reset all configuration values to null
 - `copy()` - Create a copy of the current configuration
+
+### HzLoadingAnimation
+
+Enum defining available animation types:
+
+```dart
+enum HzLoadingAnimation {
+  fade,        // Simple opacity transition
+  scale,       // Scales up from center
+  slideUp,     // Slides in from bottom
+  slideDown,   // Slides in from top
+  slideLeft,   // Slides in from right
+  slideRight,  // Slides in from left
+  rotation,    // Rotates while fading
+  none,        // No animation
+}
+```
+
+### HzLoadingPosition
+
+Enum defining positioning options:
+
+```dart
+enum HzLoadingPosition {
+  center,  // Center of screen (default)
+  top,     // Top of screen
+  bottom,  // Bottom of screen
+  custom,  // Use customAlignment property
+}
+```
 
 ### HzLoadingInitializer
 
@@ -307,13 +522,22 @@ Widget that initializes the loading system. Must wrap your app.
 
 ## Examples
 
-The package includes a comprehensive example app demonstrating various use cases:
+The package includes a comprehensive interactive example app demonstrating all features:
 
-- Simple loading screen
-- Custom styled loading
-- Progress-based loading
-- Custom progress builders
-- Timer-based interactions
+- **Interactive Controls**: Live configuration with switches, dropdowns, and sliders
+- **All Animation Types**: Test all 8 entrance/exit animations
+- **Position Testing**: Try all positioning options with custom alignments
+- **Blur Effects**: Experiment with backdrop blur and color filters
+- **Auto-dismiss Demos**: See auto-hide functionality with progress tracking
+- **Progress Variations**: Both circular and linear progress indicators
+- **Custom Builders**: Examples of custom text and progress builders
+
+### Key Demo Features
+
+- **Real-time Configuration**: Floating action button to test current settings
+- **Comprehensive Controls**: Over 30 interactive controls for all parameters
+- **Live Preview**: See changes immediately with the floating test button
+- **Configuration Display**: Current settings shown in an organized card
 
 To run the example:
 
@@ -324,22 +548,85 @@ flutter run
 
 ## Advanced Usage
 
+### Auto-dismiss Patterns
+
+#### Progress-based Auto-dismiss
+
+```dart
+Future<void> downloadFile() async {
+  ValueNotifier<int> progress = ValueNotifier<int>(0);
+  
+  HzLoading.show(HzLoadingData(
+    text: 'Downloading file...',
+    progress: progress,
+    autoHideOnComplete: true,
+    autoHideDelay: const Duration(milliseconds: 800), // Brief success display
+    onAutoHide: () {
+      // File download completed
+      Navigator.pushNamed(context, '/download-complete');
+    },
+  ));
+
+  try {
+    await downloadWithProgress(progress);
+    // Loading will auto-hide when progress reaches 100%
+  } catch (e) {
+    HzLoading.hide();
+    showErrorDialog(e);
+  } finally {
+    progress.dispose();
+  }
+}
+```
+
+#### Safety Timeout Pattern
+
+```dart
+Future<void> performLongOperation() async {
+  HzLoading.show(HzLoadingData(
+    text: 'Processing...',
+    maxDuration: const Duration(minutes: 5), // Safety timeout
+    onAutoHide: () {
+      print('Operation timed out after 5 minutes');
+      showTimeoutDialog();
+    },
+  ));
+
+  try {
+    await longRunningOperation();
+    HzLoading.hide(); // Normal completion
+  } catch (e) {
+    HzLoading.hide();
+    handleError(e);
+  }
+}
+```
+
 ### Global Configuration Management
 
-#### Setting Up Application-Wide Defaults
+#### Complete Configuration Setup
 
 ```dart
 void configureLoadingDefaults() {
-  HzLoadingScreen.instance
+  HzLoading.instance
     ..displayDuration = const Duration(seconds: 4)
     ..materialColor = Colors.black.withAlpha(150)
     ..progressColor = Colors.blue
     ..closeIconColor = Colors.blue
+    ..defaultText = 'Please wait...'
     ..textStyle = const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w600,
       color: Colors.black87,
     )
+    ..showDecoration = true
+    ..useLinearProgress = false
+    ..entranceAnimation = HzLoadingAnimation.scale
+    ..exitAnimation = HzLoadingAnimation.fade
+    ..animationDuration = const Duration(milliseconds: 300)
+    ..position = HzLoadingPosition.center
+    ..autoHideOnComplete = false
+    ..enableBackdropBlur = false
     ..decoration = BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
@@ -354,11 +641,11 @@ void configureLoadingDefaults() {
 }
 ```
 
-#### Using Configuration with Themes
+#### Theme-based Configuration
 
 ```dart
 void configureForDarkTheme() {
-  HzLoadingScreen.instance
+  HzLoading.instance
     ..materialColor = Colors.black.withAlpha(200)
     ..decoration = BoxDecoration(
       color: Colors.grey[800],
@@ -368,11 +655,12 @@ void configureForDarkTheme() {
       fontSize: 16,
       color: Colors.white,
     )
-    ..progressColor = Colors.white;
+    ..progressColor = Colors.white
+    ..closeIconColor = Colors.white;
 }
 
 void configureForLightTheme() {
-  HzLoadingScreen.instance
+  HzLoading.instance
     ..materialColor = Colors.black.withAlpha(100)
     ..decoration = BoxDecoration(
       color: Colors.white,
@@ -382,36 +670,65 @@ void configureForLightTheme() {
       fontSize: 16,
       color: Colors.black87,
     )
-    ..progressColor = Colors.blue;
+    ..progressColor = Colors.blue
+    ..closeIconColor = Colors.blue;
 }
 ```
 
-#### Temporarily Overriding Defaults
+#### Animation Presets
 
 ```dart
-void temporaryConfiguration() {
-  // Backup current configuration
-  final backup = HzLoadingScreen.instance.copy();
+void setupQuickAnimations() {
+  HzLoading.instance
+    ..entranceAnimation = HzLoadingAnimation.scale
+    ..exitAnimation = HzLoadingAnimation.fade
+    ..animationDuration = const Duration(milliseconds: 200)
+    ..animationCurve = Curves.easeOutCubic;
+}
 
-  // Apply temporary settings
-  HzLoadingScreen.instance
-    ..progressColor = Colors.red
-    ..defaultText = 'Emergency backup in progress...';
-
-  // Use temporary settings
-  HzLoadingScreen.show();
-
-  // Restore original configuration later
-  HzLoadingScreen.instance
-    ..progressColor = backup.progressColor
-    ..defaultText = backup.defaultText;
+void setupDramaticAnimations() {
+  HzLoading.instance
+    ..entranceAnimation = HzLoadingAnimation.rotation
+    ..exitAnimation = HzLoadingAnimation.slideDown
+    ..animationDuration = const Duration(milliseconds: 600)
+    ..animationCurve = Curves.elasticOut;
 }
 ```
 
 ### Custom Progress Indicator
 
+You can use any widget as a progress indicator, including the popular `flutter_spinkit` package for beautiful animations:
+
 ```dart
-HzLoadingScreen.show(HzLoadingData(
+// Add to pubspec.yaml:
+// dependencies:
+//   flutter_spinkit: ^5.2.2
+
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+// Using flutter_spinkit animations
+HzLoading.show(HzLoadingData(
+  text: 'Loading with style...',
+  progressIndicatorBuilder: () {
+    return const SpinKitWave(
+      color: Colors.blue,
+      size: 50.0,
+    );
+  },
+));
+
+// More flutter_spinkit examples
+HzLoading.show(HzLoadingData(
+  progressIndicatorBuilder: () {
+    return const SpinKitFadingCircle(
+      color: Colors.purple,
+      size: 60.0,
+    );
+  },
+));
+
+// Custom CircularProgressIndicator
+HzLoading.show(HzLoadingData(
   progressIndicatorBuilder: () {
     return const SizedBox(
       width: 50,
@@ -425,15 +742,25 @@ HzLoadingScreen.show(HzLoadingData(
 ));
 ```
 
-### Custom Text Builder
+#### Popular flutter_spinkit Options:
+- `SpinKitWave` - Wave animation
+- `SpinKitFadingCircle` - Fading circle animation  
+- `SpinKitRotatingCircle` - Rotating circle
+- `SpinKitThreeBounce` - Three bouncing dots
+- `SpinKitCubeGrid` - Cube grid animation
+- `SpinKitPulse` - Pulsing circle
+- And 20+ more beautiful animations!
+
+### Advanced Custom Text Builder
 
 ```dart
-HzLoadingScreen.show(HzLoadingData(
+HzLoading.show(HzLoadingData(
   text: 'Loading...',
   textBuilder: (title) {
     return Column(
       children: [
-        const SizedBox(height: 20),
+        const Icon(Icons.cloud_download, size: 32, color: Colors.blue),
+        const SizedBox(height: 16),
         Text(
           title,
           style: const TextStyle(
@@ -441,7 +768,7 @@ HzLoadingScreen.show(HzLoadingData(
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         const Text('Please wait while we process your request...'),
       ],
     );
@@ -449,27 +776,76 @@ HzLoadingScreen.show(HzLoadingData(
 ));
 ```
 
-## Best Practices
-
-1. **Always hide loading screens**: Ensure you call `HzLoadingScreen.hide()` in both success and error cases
-2. **Use try-finally blocks**: Wrap your async operations to guarantee loading screen dismissal
-3. **Dispose progress notifiers**: Don't forget to dispose `ValueNotifier` instances
-4. **Provide feedback**: Use meaningful text and progress indicators
-5. **Handle user interactions**: Implement `onClosed` callback for user-initiated dismissals
-6. **Configure defaults early**: Set up global configuration in your app's main() function
-7. **Use withDefaults() for consistency**: Prefer `HzLoadingData.withDefaults()` to maintain consistent styling
-8. **Theme integration**: Update configuration when switching themes
+### Complex Positioning
 
 ```dart
-void loadData() async {
-  HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
+// Bottom-right corner with custom styling
+HzLoading.show(HzLoadingData(
+  text: 'Syncing...',
+  position: HzLoadingPosition.custom,
+  customAlignment: Alignment.bottomRight,
+  margin: const EdgeInsets.all(24),
+  maxWidth: 200,
+  decoration: BoxDecoration(
+    color: Colors.black87,
+    borderRadius: BorderRadius.circular(8),
+  ),
+  textStyle: const TextStyle(color: Colors.white),
+  progressColor: Colors.white,
+));
+```
+
+## Best Practices
+
+### ✅ Recommended Patterns
+
+1. **Always hide loading screens**: Ensure you call `HzLoading.hide()` in both success and error cases
+2. **Use try-finally blocks**: Wrap your async operations to guarantee loading screen dismissal
+3. **Dispose progress notifiers**: Don't forget to dispose `ValueNotifier` instances
+4. **Provide meaningful feedback**: Use descriptive text and appropriate progress indicators
+5. **Configure defaults early**: Set up global configuration in your app's main() function
+6. **Use withDefaults() for consistency**: Prefer `HzLoadingData.withDefaults()` to maintain consistent styling
+7. **Leverage auto-dismiss**: Use auto-hide features to improve user experience
+8. **Implement safety timeouts**: Always set maxDuration for long operations
+9. **Handle theme changes**: Update configuration when switching themes
+10. **Use appropriate animations**: Match animations to your app's design language
+11. **Consider flutter_spinkit**: Use `flutter_spinkit: ^5.2.2` for beautiful progress indicator animations
+
+```dart
+// ✅ Proper error handling
+Future<void> loadData() async {
+  HzLoading.show(HzLoadingData(text: 'Loading...'));
 
   try {
     await apiCall();
   } catch (e) {
     // Handle error
+    showErrorSnackBar(e);
   } finally {
-    HzLoadingScreen.hide();
+    HzLoading.hide(); // Always hide
+  }
+}
+
+// ✅ Auto-dismiss with progress
+Future<void> uploadFile() async {
+  ValueNotifier<int> progress = ValueNotifier<int>(0);
+  
+  HzLoading.show(HzLoadingData.withDefaults(
+    text: 'Uploading...',
+    progress: progress,
+    autoHideOnComplete: true,
+    autoHideDelay: const Duration(milliseconds: 500),
+    maxDuration: const Duration(minutes: 10), // Safety timeout
+  ));
+
+  try {
+    await uploadWithProgress(progress);
+    // Will auto-hide on completion
+  } catch (e) {
+    HzLoading.hide();
+    handleUploadError(e);
+  } finally {
+    progress.dispose(); // Always dispose
   }
 }
 ```
@@ -479,30 +855,59 @@ void loadData() async {
 ```dart
 // ✅ Configure once in main()
 void main() {
-  HzLoadingScreen.instance
+  HzLoading.instance
     ..materialColor = Colors.black.withAlpha(120)
     ..progressColor = Colors.blue
-    ..defaultText = 'Please wait...';
+    ..defaultText = 'Please wait...'
+    ..autoHideOnComplete = false // Set reasonable defaults
+    ..maxDuration = const Duration(minutes: 5); // Safety timeout
 
   runApp(MyApp());
 }
 
 // ✅ Use withDefaults() for consistency
-HzLoadingScreen.show(HzLoadingData.withDefaults(
+HzLoading.show(HzLoadingData.withDefaults(
   text: 'Uploading files...',
+  autoHideOnComplete: true, // Override for this specific case
 ));
 
 // ✅ Update configuration for theme changes
 void updateTheme(bool isDark) {
-  HzLoadingScreen.instance
+  HzLoading.instance
     ..materialColor = isDark
         ? Colors.black.withAlpha(200)
         : Colors.black.withAlpha(100)
     ..decoration = BoxDecoration(
       color: isDark ? Colors.grey[800] : Colors.white,
       borderRadius: BorderRadius.circular(12),
+    )
+    ..textStyle = TextStyle(
+      color: isDark ? Colors.white : Colors.black87,
     );
 }
+```
+
+### ❌ Common Pitfalls to Avoid
+
+```dart
+// ❌ Don't forget to hide loading screens
+Future<void> badExample() async {
+  HzLoading.show(HzLoadingData(text: 'Loading...'));
+  await apiCall();
+  // Missing HzLoading.hide() - loading screen stays forever!
+}
+
+// ❌ Don't forget to dispose progress notifiers
+Future<void> memoryLeak() async {
+  ValueNotifier<int> progress = ValueNotifier<int>(0);
+  HzLoading.show(HzLoadingData(progress: progress));
+  // Missing progress.dispose() - memory leak!
+}
+
+// ❌ Don't use overly long maxDuration without user feedback
+HzLoading.show(HzLoadingData(
+  maxDuration: const Duration(hours: 1), // Too long!
+));
 ```
 
 ## Contributing
