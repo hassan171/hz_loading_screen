@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Loading Screen Components
 
-- **HzLoadingScreen**: Main controller class with static methods for show/hide operations
+- **HzLoading**: Main controller class with static methods for show/hide operations
 - **HzLoadingInitializer**: Wrapper widget that sets up the overlay infrastructure
 - **HzLoadingData**: Configuration class with 18+ customizable properties
 - **HzLoadingWidget**: Internal widget that renders the loading UI
@@ -108,13 +108,13 @@ MaterialApp(
 )
 
 // Simple loading
-HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
+HzLoading.show(HzLoadingData(text: 'Loading...'));
 await operation();
-HzLoadingScreen.hide();
+HzLoading.hide();
 
 // Progress tracking
 ValueNotifier<int> progress = ValueNotifier<int>(0);
-HzLoadingScreen.show(HzLoadingData(
+HzLoading.show(HzLoadingData(
   text: 'Processing...',
   progress: progress,
 ));

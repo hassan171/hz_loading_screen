@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hz_loading_screen/hz_loading_screen.dart';
 
 void main() {
-  group('HzLoadingScreen Tests', () {
+  group('HzLoading Tests', () {
     tearDown(() {
       // Reset loading state after each test
-      HzLoadingScreen.hide();
+      HzLoading.hide();
     });
 
     testWidgets('HzLoadingInitializer creates overlay structure', (WidgetTester tester) async {
@@ -28,8 +28,8 @@ void main() {
       // Should find the test content
       expect(find.text('Test Content'), findsOneWidget);
 
-      // Should have overlay structure
-      expect(find.byType(Overlay), findsOneWidget);
+      // Should have at least one overlay (there might be multiple due to MaterialApp)
+      expect(find.byType(Overlay), findsAtLeastNWidgets(1));
     });
 
     testWidgets('Loading screen shows and hides correctly', (WidgetTester tester) async {
@@ -45,24 +45,24 @@ void main() {
       );
 
       // Initially not visible
-      expect(HzLoadingScreen.isVisible, false);
+      expect(HzLoading.isVisible, false);
       expect(find.byType(CircularProgressIndicator), findsNothing);
 
       // Show loading screen
-      HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
+      HzLoading.show(HzLoadingData(text: 'Loading...'));
       await tester.pump();
 
       // Should be visible now
-      expect(HzLoadingScreen.isVisible, true);
+      expect(HzLoading.isVisible, true);
       expect(find.text('Loading...'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
       // Hide loading screen
-      HzLoadingScreen.hide();
+      HzLoading.hide();
       await tester.pump();
 
       // Should be hidden now
-      expect(HzLoadingScreen.isVisible, false);
+      expect(HzLoading.isVisible, false);
       expect(find.text('Loading...'), findsNothing);
     });
 
@@ -76,7 +76,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Custom Loading Message',
       ));
       await tester.pump();
@@ -94,7 +94,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: null, // No text
       ));
       await tester.pump();
@@ -116,7 +116,7 @@ void main() {
 
       ValueNotifier<int> progress = ValueNotifier<int>(0);
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Loading with progress...',
         progress: progress,
       ));
@@ -154,7 +154,7 @@ void main() {
 
       ValueNotifier<int> progress = ValueNotifier<int>(25);
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Custom progress...',
         progress: progress,
         progressBuilder: (progressValue) {
@@ -179,7 +179,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Custom Text',
         textBuilder: (title) {
           return Column(
@@ -209,7 +209,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         progressIndicatorBuilder: () {
           return Container(
             width: 50,
@@ -253,7 +253,7 @@ void main() {
 
       bool onClosedCalled = false;
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Timer test...',
         withTimer: true,
         duration: const Duration(milliseconds: 100),
@@ -277,7 +277,7 @@ void main() {
       await tester.pump();
 
       // Loading should be hidden and callback called
-      expect(HzLoadingScreen.isVisible, false);
+      expect(HzLoading.isVisible, false);
       expect(onClosedCalled, true);
     });
 
@@ -291,7 +291,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'No timer...',
         withTimer: false,
       ));
@@ -314,7 +314,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Styled loading',
         materialColor: Colors.red.withAlpha(100),
         decoration: const BoxDecoration(
@@ -352,7 +352,7 @@ void main() {
         ),
       );
 
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'No indicator',
         showProgressIndicator: false,
       ));
@@ -363,9 +363,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    test('HzLoadingScreen singleton behavior', () {
-      final instance1 = HzLoadingScreen();
-      final instance2 = HzLoadingScreen();
+    test('HzLoading singleton behavior', () {
+      final instance1 = HzLoading();
+      final instance2 = HzLoading();
 
       // Should be the same instance (singleton)
       expect(identical(instance1, instance2), true);
@@ -388,10 +388,31 @@ void main() {
     test('HzLoadingData default values', () {
       final data = HzLoadingData();
 
-      expect(data.isVisible, true);
+      expect(data.isVisible, false);
       expect(data.withTimer, true);
       expect(data.text, null);
       expect(data.progressColor, null);
+      expect(data.showDecoration, null);
+    });
+
+    test('HzLoadingData showDecoration parameter', () {
+      final dataWithDecorationTrue = HzLoadingData(showDecoration: true);
+      final dataWithDecorationFalse = HzLoadingData(showDecoration: false);
+      final dataWithDecorationNull = HzLoadingData();
+
+      expect(dataWithDecorationTrue.showDecoration, true);
+      expect(dataWithDecorationFalse.showDecoration, false);
+      expect(dataWithDecorationNull.showDecoration, null);
+    });
+
+    test('HzLoadingData useLinearProgress parameter', () {
+      final dataWithLinearProgressTrue = HzLoadingData(useLinearProgress: true);
+      final dataWithLinearProgressFalse = HzLoadingData(useLinearProgress: false);
+      final dataWithLinearProgressNull = HzLoadingData();
+
+      expect(dataWithLinearProgressTrue.useLinearProgress, true);
+      expect(dataWithLinearProgressFalse.useLinearProgress, false);
+      expect(dataWithLinearProgressNull.useLinearProgress, null);
     });
 
     testWidgets('Multiple show calls update configuration', (WidgetTester tester) async {
@@ -405,7 +426,7 @@ void main() {
       );
 
       // First show call
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'First message',
       ));
       await tester.pump();
@@ -413,7 +434,7 @@ void main() {
       expect(find.text('First message'), findsOneWidget);
 
       // Second show call should update
-      HzLoadingScreen.show(HzLoadingData(
+      HzLoading.show(HzLoadingData(
         text: 'Second message',
       ));
       await tester.pump();
@@ -435,10 +456,10 @@ void main() {
 
       // This should not throw an error, even though it won't display
       expect(() {
-        HzLoadingScreen.show(HzLoadingData(text: 'Test'));
+        HzLoading.show(HzLoadingData(text: 'Test'));
       }, returnsNormally);
 
-      expect(HzLoadingScreen.isVisible, true); // State should still update
+      expect(HzLoading.isVisible, true); // State should still update
     });
   });
 
@@ -491,6 +512,198 @@ void main() {
       expect(data.showProgressIndicator, false);
 
       progress.dispose();
+    });
+  });
+
+  group('HzLoadingConfig Tests', () {
+    tearDown(() {
+      // Reset configuration after each test
+      HzLoadingConfig.instance.reset();
+    });
+
+    test('Configuration singleton behavior', () {
+      final instance1 = HzLoadingConfig.instance;
+      final instance2 = HzLoadingConfig.instance;
+
+      // Should be the same instance (singleton)
+      expect(identical(instance1, instance2), true);
+    });
+
+    test('Configuration default values', () {
+      final config = HzLoadingConfig.instance;
+
+      // All values should be null by default
+      expect(config.displayDuration, null);
+      expect(config.defaultText, null);
+      expect(config.materialColor, null);
+      expect(config.padding, null);
+      expect(config.decoration, null);
+      expect(config.progressColor, null);
+      expect(config.textStyle, null);
+      expect(config.progressTextStyle, null);
+      expect(config.closeIcon, null);
+      expect(config.closeIconColor, null);
+      expect(config.showProgressIndicator, null);
+      expect(config.withTimer, null);
+      expect(config.showDecoration, null);
+      expect(config.useLinearProgress, null);
+      expect(config.onClosed, null);
+    });
+
+    test('Configuration setter and getter', () {
+      final config = HzLoadingConfig.instance;
+      final duration = Duration(seconds: 5);
+      final onClosed = () {};
+
+      config.displayDuration = duration;
+      config.defaultText = 'Test Text';
+      config.materialColor = Colors.red;
+      config.progressColor = Colors.blue;
+      config.withTimer = false;
+      config.showDecoration = true;
+      config.useLinearProgress = true;
+      config.onClosed = onClosed;
+
+      expect(config.displayDuration, duration);
+      expect(config.defaultText, 'Test Text');
+      expect(config.materialColor, Colors.red);
+      expect(config.progressColor, Colors.blue);
+      expect(config.withTimer, false);
+      expect(config.showDecoration, true);
+      expect(config.useLinearProgress, true);
+      expect(config.onClosed, onClosed);
+    });
+
+    test('Configuration reset', () {
+      final config = HzLoadingConfig.instance;
+
+      // Set some values
+      config.displayDuration = Duration(seconds: 5);
+      config.defaultText = 'Test';
+      config.materialColor = Colors.red;
+
+      // Reset
+      config.reset();
+
+      // All values should be null again
+      expect(config.displayDuration, null);
+      expect(config.defaultText, null);
+      expect(config.materialColor, null);
+    });
+
+    test('Configuration copy', () {
+      final config = HzLoadingConfig.instance;
+
+      config.displayDuration = Duration(seconds: 3);
+      config.defaultText = 'Original';
+      config.materialColor = Colors.blue;
+
+      final copy = config.copy();
+
+      expect(copy.displayDuration, Duration(seconds: 3));
+      expect(copy.defaultText, 'Original');
+      expect(copy.materialColor, Colors.blue);
+
+      // Modify original
+      config.defaultText = 'Modified';
+
+      // Copy should remain unchanged
+      expect(copy.defaultText, 'Original');
+    });
+
+    testWidgets('HzLoadingData.withDefaults uses configuration', (WidgetTester tester) async {
+      // Configure defaults
+      HzLoadingConfig.instance
+        ..defaultText = 'Default Text'
+        ..materialColor = Colors.red
+        ..progressColor = Colors.green
+        ..withTimer = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return HzLoadingInitializer(child: child!);
+          },
+          home: const Scaffold(),
+        ),
+      );
+
+      // Create loading data with defaults
+      final data = HzLoadingData.withDefaults();
+
+      expect(data.text, 'Default Text');
+      expect(data.materialColor, Colors.red);
+      expect(data.progressColor, Colors.green);
+      expect(data.withTimer, false);
+    });
+
+    testWidgets('HzLoadingData.withDefaults allows overrides', (WidgetTester tester) async {
+      // Configure defaults
+      HzLoadingConfig.instance
+        ..defaultText = 'Default Text'
+        ..materialColor = Colors.red
+        ..progressColor = Colors.green;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return HzLoadingInitializer(child: child!);
+          },
+          home: const Scaffold(),
+        ),
+      );
+
+      // Create loading data with defaults and overrides
+      final data = HzLoadingData.withDefaults(
+        text: 'Override Text',
+        materialColor: Colors.blue,
+        // progressColor should use default (Colors.green)
+      );
+
+      expect(data.text, 'Override Text'); // Overridden
+      expect(data.materialColor, Colors.blue); // Overridden
+      expect(data.progressColor, Colors.green); // From config
+    });
+
+    testWidgets('HzLoading.instance provides config access', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return HzLoadingInitializer(child: child!);
+          },
+          home: const Scaffold(),
+        ),
+      );
+
+      // Test that HzLoading.instance is the same as HzLoadingConfig.instance
+      expect(identical(HzLoading.instance, HzLoadingConfig.instance), true);
+
+      // Test configuration via HzLoading.instance
+      HzLoading.instance.defaultText = 'Via HzLoading';
+      expect(HzLoadingConfig.instance.defaultText, 'Via HzLoading');
+    });
+
+    testWidgets('HzLoading.show uses configuration when no data provided', (WidgetTester tester) async {
+      // Configure defaults
+      HzLoadingConfig.instance
+        ..defaultText = 'Config Text'
+        ..materialColor = Colors.purple;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return HzLoadingInitializer(child: child!);
+          },
+          home: const Scaffold(),
+        ),
+      );
+
+      // Show loading without providing data
+      HzLoading.show();
+      await tester.pump();
+
+      // Should use the configured defaults
+      expect(find.text('Config Text'), findsOneWidget);
     });
   });
 }

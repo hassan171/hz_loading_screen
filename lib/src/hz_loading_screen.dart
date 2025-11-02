@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hz_loading_screen/src/hz_loading_data.dart';
+import 'package:hz_loading_screen/src/hz_loading_config.dart';
 
 /// Main controller class for the Hz Loading Screen system.
 ///
@@ -24,20 +25,20 @@ import 'package:hz_loading_screen/src/hz_loading_data.dart';
 /// ### Simple loading screen:
 /// ```dart
 /// // Show loading
-/// HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
+/// HzLoading.show(HzLoadingData(text: 'Loading...'));
 ///
 /// // Perform async operation
 /// await someAsyncOperation();
 ///
 /// // Hide loading
-/// HzLoadingScreen.hide();
+/// HzLoading.hide();
 /// ```
 ///
 /// ### Loading with progress:
 /// ```dart
 /// ValueNotifier<int> progress = ValueNotifier<int>(0);
 ///
-/// HzLoadingScreen.show(HzLoadingData(
+/// HzLoading.show(HzLoadingData(
 ///   text: 'Downloading...',
 ///   progress: progress,
 /// ));
@@ -48,7 +49,7 @@ import 'package:hz_loading_screen/src/hz_loading_data.dart';
 ///   progress.value = i;
 /// }
 ///
-/// HzLoadingScreen.hide();
+/// HzLoading.hide();
 /// progress.dispose();
 /// ```
 ///
@@ -61,26 +62,26 @@ import 'package:hz_loading_screen/src/hz_loading_data.dart';
 ///
 /// ```dart
 /// void performOperation() async {
-///   HzLoadingScreen.show(HzLoadingData(text: 'Processing...'));
+///   HzLoading.show(HzLoadingData(text: 'Processing...'));
 ///
 ///   try {
 ///     await riskyOperation();
 ///   } catch (e) {
 ///     // Handle error
 ///   } finally {
-///     HzLoadingScreen.hide();
+///     HzLoading.hide();
 ///   }
 /// }
 /// ```
-class HzLoadingScreen {
+class HzLoading {
   /// Private singleton instance.
-  static final HzLoadingScreen _ = HzLoadingScreen._internal();
+  static final HzLoading _ = HzLoading._internal();
 
   /// Factory constructor that returns the singleton instance.
-  factory HzLoadingScreen() => _;
+  factory HzLoading() => _;
 
   /// Private constructor for singleton pattern.
-  HzLoadingScreen._internal();
+  HzLoading._internal();
 
   /// Internal data notifier that manages the loading screen state.
   ///
@@ -99,11 +100,36 @@ class HzLoadingScreen {
   /// ## Example
   ///
   /// ```dart
-  /// if (!HzLoadingScreen.isVisible) {
-  ///   HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
+  /// if (!HzLoading.isVisible) {
+  ///   HzLoading.show(HzLoadingData(text: 'Loading...'));
   /// }
   /// ```
   static bool get isVisible => data.value.isVisible;
+
+  /// Access to the global configuration instance.
+  ///
+  /// This provides convenient access to [HzLoadingConfig.instance] for setting
+  /// default values that will be applied to all loading screens.
+  ///
+  /// ## Example
+  ///
+  /// ```dart
+  /// HzLoading.instance
+  ///   ..displayDuration = Duration(seconds: 3)
+  ///   ..materialColor = Colors.black.withAlpha(100)
+  ///   ..progressColor = Colors.blue
+  ///   ..defaultText = 'Please wait...';
+  /// ```
+  ///
+  /// This is equivalent to:
+  /// ```dart
+  /// HzLoadingConfig.instance
+  ///   ..displayDuration = Duration(seconds: 3)
+  ///   ..materialColor = Colors.black.withAlpha(100)
+  ///   ..progressColor = Colors.blue
+  ///   ..defaultText = 'Please wait...';
+  /// ```
+  static HzLoadingConfig get instance => HzLoadingConfig.instance;
 
   /// Shows the loading screen with the specified configuration.
   ///
@@ -125,12 +151,12 @@ class HzLoadingScreen {
   ///
   /// ### Basic usage:
   /// ```dart
-  /// HzLoadingScreen.show();
+  /// HzLoading.show();
   /// ```
   ///
   /// ### With custom text:
   /// ```dart
-  /// HzLoadingScreen.show(HzLoadingData(
+  /// HzLoading.show(HzLoadingData(
   ///   text: 'Please wait...',
   ///   withTimer: false,
   /// ));
@@ -138,7 +164,7 @@ class HzLoadingScreen {
   ///
   /// ### With custom styling:
   /// ```dart
-  /// HzLoadingScreen.show(HzLoadingData(
+  /// HzLoading.show(HzLoadingData(
   ///   text: 'Processing...',
   ///   materialColor: Colors.black.withAlpha(100),
   ///   decoration: BoxDecoration(
@@ -151,7 +177,7 @@ class HzLoadingScreen {
   /// ### With progress tracking:
   /// ```dart
   /// ValueNotifier<int> progress = ValueNotifier<int>(0);
-  /// HzLoadingScreen.show(HzLoadingData(
+  /// HzLoading.show(HzLoadingData(
   ///   text: 'Downloading...',
   ///   progress: progress,
   /// ));
@@ -160,8 +186,8 @@ class HzLoadingScreen {
     // Dismiss keyboard if visible
     FocusManager.instance.primaryFocus?.unfocus();
 
-    // Update loading data - use provided data or create default visible loading
-    data.value = loadingData ?? HzLoadingData(isVisible: true);
+    // Update loading data - use provided data, create with defaults, or fallback to basic default
+    data.value = loadingData?.copyWith(isVisible: true) ?? HzLoadingData.withDefaults(isVisible: true);
   }
 
   /// Hides the loading screen.
@@ -179,21 +205,21 @@ class HzLoadingScreen {
   ///
   /// ### Basic usage:
   /// ```dart
-  /// HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
+  /// HzLoading.show(HzLoadingData(text: 'Loading...'));
   /// await performAsyncOperation();
-  /// HzLoadingScreen.hide();
+  /// HzLoading.hide();
   /// ```
   ///
   /// ### With error handling:
   /// ```dart
-  /// HzLoadingScreen.show(HzLoadingData(text: 'Processing...'));
+  /// HzLoading.show(HzLoadingData(text: 'Processing...'));
   ///
   /// try {
   ///   await riskyOperation();
   /// } catch (e) {
   ///   showErrorDialog(e.toString());
   /// } finally {
-  ///   HzLoadingScreen.hide(); // Always hide loading
+  ///   HzLoading.hide(); // Always hide loading
   /// }
   /// ```
   ///

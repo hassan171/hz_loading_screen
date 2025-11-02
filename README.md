@@ -63,6 +63,61 @@ class MyApp extends StatelessWidget {
 }
 ```
 
+### Global Configuration (Optional)
+
+Set default values that will be applied to all loading screens, similar to EasyLoading's instance configuration:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:hz_loading_screen/hz_loading_screen.dart';
+
+void main() {
+  // Configure global defaults (optional)
+  HzLoadingScreen.instance
+    ..displayDuration = const Duration(seconds: 3)
+    ..materialColor = Colors.black.withAlpha(120)
+    ..progressColor = Colors.blue
+    ..closeIconColor = Colors.blue
+    ..defaultText = 'Please wait...'
+    ..textStyle = const TextStyle(
+      fontSize: 16,
+      color: Colors.black87,
+      fontWeight: FontWeight.w500,
+    )
+    ..decoration = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+
+  runApp(const MyApp());
+}
+```
+
+With global configuration, you can:
+
+```dart
+// Use all defaults
+HzLoadingScreen.show();
+
+// Use defaults with custom text
+HzLoadingScreen.show(HzLoadingData.withDefaults(
+  text: 'Custom message',
+));
+
+// Override specific defaults
+HzLoadingScreen.show(HzLoadingData.withDefaults(
+  text: 'Downloading...',
+  progressColor: Colors.green, // Override just the color
+));
+```
+
 ## Usage
 
 ### Simple Loading Screen
@@ -201,6 +256,45 @@ Configuration class for customizing the loading screen appearance and behavior.
 | `progressTextStyle`        | `TextStyle?`               | Progress text styling                 | Default style                 |
 | `showProgressIndicator`    | `bool?`                    | Show/hide progress indicator          | `true`                        |
 
+#### Factory Methods
+
+- `HzLoadingData()` - Create with specified values
+- `HzLoadingData.withDefaults()` - Create using global configuration defaults
+
+### HzLoadingConfig
+
+Global configuration class for setting default values that apply to all loading screens.
+
+#### Static Properties
+
+- `instance` - Get the singleton configuration instance
+
+#### Configuration Properties
+
+| Property                   | Type                       | Description                           | Default |
+| -------------------------- | -------------------------- | ------------------------------------- | ------- |
+| `displayDuration`          | `Duration?`                | Default timer duration                | `null`  |
+| `defaultText`              | `String?`                  | Default loading text                  | `null`  |
+| `materialColor`            | `Color?`                   | Default background overlay color      | `null`  |
+| `padding`                  | `EdgeInsetsGeometry?`      | Default container padding             | `null`  |
+| `decoration`               | `BoxDecoration?`           | Default container decoration          | `null`  |
+| `progressColor`            | `Color?`                   | Default progress indicator color      | `null`  |
+| `textStyle`                | `TextStyle?`               | Default text styling                  | `null`  |
+| `progressTextStyle`        | `TextStyle?`               | Default progress text styling         | `null`  |
+| `closeIcon`                | `IconData?`                | Default close button icon             | `null`  |
+| `closeIconColor`           | `Color?`                   | Default close button color            | `null`  |
+| `showProgressIndicator`    | `bool?`                    | Default progress indicator visibility | `null`  |
+| `withTimer`                | `bool?`                    | Default timer behavior                | `null`  |
+| `onClosed`                 | `Function?`                | Default close callback                | `null`  |
+| `progressIndicatorBuilder` | `Widget Function()?`       | Default progress indicator builder    | `null`  |
+| `textBuilder`              | `Widget Function(String)?` | Default text builder                  | `null`  |
+| `progressBuilder`          | `Widget Function(int)?`    | Default progress builder              | `null`  |
+
+#### Configuration Methods
+
+- `reset()` - Reset all configuration values to null
+- `copy()` - Create a copy of the current configuration
+
 ### HzLoadingInitializer
 
 Widget that initializes the loading system. Must wrap your app.
@@ -229,6 +323,90 @@ flutter run
 ```
 
 ## Advanced Usage
+
+### Global Configuration Management
+
+#### Setting Up Application-Wide Defaults
+
+```dart
+void configureLoadingDefaults() {
+  HzLoadingScreen.instance
+    ..displayDuration = const Duration(seconds: 4)
+    ..materialColor = Colors.black.withAlpha(150)
+    ..progressColor = Colors.blue
+    ..closeIconColor = Colors.blue
+    ..textStyle = const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: Colors.black87,
+    )
+    ..decoration = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+}
+```
+
+#### Using Configuration with Themes
+
+```dart
+void configureForDarkTheme() {
+  HzLoadingScreen.instance
+    ..materialColor = Colors.black.withAlpha(200)
+    ..decoration = BoxDecoration(
+      color: Colors.grey[800],
+      borderRadius: BorderRadius.circular(12),
+    )
+    ..textStyle = const TextStyle(
+      fontSize: 16,
+      color: Colors.white,
+    )
+    ..progressColor = Colors.white;
+}
+
+void configureForLightTheme() {
+  HzLoadingScreen.instance
+    ..materialColor = Colors.black.withAlpha(100)
+    ..decoration = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+    )
+    ..textStyle = const TextStyle(
+      fontSize: 16,
+      color: Colors.black87,
+    )
+    ..progressColor = Colors.blue;
+}
+```
+
+#### Temporarily Overriding Defaults
+
+```dart
+void temporaryConfiguration() {
+  // Backup current configuration
+  final backup = HzLoadingScreen.instance.copy();
+
+  // Apply temporary settings
+  HzLoadingScreen.instance
+    ..progressColor = Colors.red
+    ..defaultText = 'Emergency backup in progress...';
+
+  // Use temporary settings
+  HzLoadingScreen.show();
+
+  // Restore original configuration later
+  HzLoadingScreen.instance
+    ..progressColor = backup.progressColor
+    ..defaultText = backup.defaultText;
+}
+```
 
 ### Custom Progress Indicator
 
@@ -278,6 +456,9 @@ HzLoadingScreen.show(HzLoadingData(
 3. **Dispose progress notifiers**: Don't forget to dispose `ValueNotifier` instances
 4. **Provide feedback**: Use meaningful text and progress indicators
 5. **Handle user interactions**: Implement `onClosed` callback for user-initiated dismissals
+6. **Configure defaults early**: Set up global configuration in your app's main() function
+7. **Use withDefaults() for consistency**: Prefer `HzLoadingData.withDefaults()` to maintain consistent styling
+8. **Theme integration**: Update configuration when switching themes
 
 ```dart
 void loadData() async {
@@ -290,6 +471,37 @@ void loadData() async {
   } finally {
     HzLoadingScreen.hide();
   }
+}
+```
+
+### Configuration Best Practices
+
+```dart
+// ✅ Configure once in main()
+void main() {
+  HzLoadingScreen.instance
+    ..materialColor = Colors.black.withAlpha(120)
+    ..progressColor = Colors.blue
+    ..defaultText = 'Please wait...';
+
+  runApp(MyApp());
+}
+
+// ✅ Use withDefaults() for consistency
+HzLoadingScreen.show(HzLoadingData.withDefaults(
+  text: 'Uploading files...',
+));
+
+// ✅ Update configuration for theme changes
+void updateTheme(bool isDark) {
+  HzLoadingScreen.instance
+    ..materialColor = isDark
+        ? Colors.black.withAlpha(200)
+        : Colors.black.withAlpha(100)
+    ..decoration = BoxDecoration(
+      color: isDark ? Colors.grey[800] : Colors.white,
+      borderRadius: BorderRadius.circular(12),
+    );
 }
 ```
 

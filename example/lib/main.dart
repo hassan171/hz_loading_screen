@@ -2,6 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:hz_loading_screen/hz_loading_screen.dart';
 
 void main() {
+  // Configure global defaults for all loading screens
+  HzLoading.instance
+    ..displayDuration = const Duration(seconds: 3)
+    ..materialColor = Colors.black.withAlpha(120)
+    ..progressColor = Colors.deepPurple
+    ..closeIconColor = Colors.deepPurple
+    ..textStyle = const TextStyle(
+      fontSize: 16,
+      color: Colors.black87,
+      fontWeight: FontWeight.w500,
+    )
+    ..showDecoration = true
+    ..decoration = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+
   runApp(const MyApp());
 }
 
@@ -34,7 +58,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void _simpleLoading() async {
-    HzLoadingScreen.show(HzLoadingData(
+    HzLoading.show(HzLoadingData(
       text: 'Loading, please wait...',
       withTimer: false,
       materialColor: Colors.black.withAlpha(100),
@@ -46,11 +70,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     await Future.delayed(const Duration(seconds: 3));
 
-    HzLoadingScreen.hide();
+    HzLoading.hide();
   }
 
   void _customLoading() async {
-    HzLoadingScreen.show(HzLoadingData(
+    HzLoading.show(HzLoadingData(
       text: 'Custom Loading...',
       progressIndicatorBuilder: () {
         return CircularProgressIndicator(
@@ -81,11 +105,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     await Future.delayed(const Duration(seconds: 4));
 
-    HzLoadingScreen.hide();
+    HzLoading.hide();
   }
 
   void _customLoading2() async {
-    HzLoadingScreen.show(HzLoadingData(
+    HzLoading.show(HzLoadingData(
       text: 'Custom Loading...',
       withTimer: false,
       textBuilder: (title) {
@@ -116,13 +140,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     await Future.delayed(const Duration(seconds: 4));
 
-    HzLoadingScreen.hide();
+    HzLoading.hide();
   }
 
   void _customLoading3() async {
     //with progress
     ValueNotifier<int> progress = ValueNotifier<int>(0);
-    HzLoadingScreen.show(HzLoadingData(
+    HzLoading.show(HzLoadingData(
       text: 'Loading with progress...',
       progress: progress,
       withTimer: false,
@@ -136,40 +160,18 @@ class _MyHomePageState extends State<MyHomePage> {
       await Future.delayed(const Duration(milliseconds: 50));
       progress.value = i;
     }
-    HzLoadingScreen.hide();
+    HzLoading.hide();
     progress.dispose();
   }
 
   void _customLoading4() async {
-    //with progress
+    //with progress using linear indicator
     ValueNotifier<int> progress = ValueNotifier<int>(0);
-    HzLoadingScreen.show(HzLoadingData(
-      text: 'Loading with progress...',
+    HzLoading.show(HzLoadingData(
+      text: 'Loading with linear progress...',
       progress: progress,
       withTimer: false,
-      progressBuilder: (progress) {
-        return SizedBox(
-          width: 200,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              LinearProgressIndicator(
-                value: progress / 100,
-                color: Colors.blue,
-                backgroundColor: Colors.grey.withAlpha(100),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                '${progress.toStringAsFixed(0)}%',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      useLinearProgress: true, // Use the new parameter instead of progressBuilder
       materialColor: Colors.green.withAlpha(100),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -180,7 +182,84 @@ class _MyHomePageState extends State<MyHomePage> {
       await Future.delayed(const Duration(milliseconds: 50));
       progress.value = i;
     }
-    HzLoadingScreen.hide();
+    HzLoading.hide();
+    progress.dispose();
+  }
+
+  void _defaultConfigLoading() async {
+    // This will use the default configuration set in main()
+    HzLoading.show();
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    HzLoading.hide();
+  }
+
+  void _defaultConfigWithOverride() async {
+    // Use defaults but override specific values
+    HzLoading.show(HzLoadingData.withDefaults(
+      text: 'Using defaults with custom text!',
+      progressColor: Colors.orange, // Override just the progress color
+    ));
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    HzLoading.hide();
+  }
+
+  void _showDecorationDemo() async {
+    // Show loading with decoration even without text
+    HzLoading.show(HzLoadingData(
+      showDecoration: true,
+      withTimer: false,
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.blue, width: 2),
+      ),
+      progressColor: Colors.blue,
+    ));
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    HzLoading.hide();
+  }
+
+  void _linearProgressDemo() async {
+    // Show with linear progress indicator
+    ValueNotifier<int> progress = ValueNotifier<int>(0);
+    HzLoading.show(HzLoadingData(
+      text: 'Linear Progress Demo',
+      progress: progress,
+      withTimer: false,
+      useLinearProgress: true, // Show linear indicator
+    ));
+
+    for (int i = 0; i <= 100; i += 5) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      progress.value = i;
+    }
+
+    HzLoading.hide();
+    progress.dispose();
+  }
+
+  void _textProgressDemo() async {
+    // Show with text progress percentage
+    ValueNotifier<int> progress = ValueNotifier<int>(0);
+    HzLoading.show(HzLoadingData(
+      text: 'Text Progress Demo',
+      progress: progress,
+      withTimer: false,
+      useLinearProgress: false, // Show text percentage
+    ));
+
+    for (int i = 0; i <= 100; i += 5) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      progress.value = i;
+    }
+
+    HzLoading.hide();
     progress.dispose();
   }
 
@@ -214,7 +293,27 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: _customLoading4,
-              child: const Text('Show Custom Loading with Progress Builder'),
+              child: const Text('Show Custom Loading with Linear Progress'),
+            ),
+            ElevatedButton(
+              onPressed: _defaultConfigLoading,
+              child: const Text('Show Default Config Loading'),
+            ),
+            ElevatedButton(
+              onPressed: _defaultConfigWithOverride,
+              child: const Text('Show Default Config with Override'),
+            ),
+            ElevatedButton(
+              onPressed: _showDecorationDemo,
+              child: const Text('Show Decoration Demo'),
+            ),
+            ElevatedButton(
+              onPressed: _linearProgressDemo,
+              child: const Text('Linear Progress Demo'),
+            ),
+            ElevatedButton(
+              onPressed: _textProgressDemo,
+              child: const Text('Text Progress Demo'),
             ),
           ],
         ),

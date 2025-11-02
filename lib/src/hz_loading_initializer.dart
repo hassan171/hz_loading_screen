@@ -5,7 +5,7 @@ import 'package:hz_loading_screen/src/hz_loading_widget.dart';
 ///
 /// This widget creates the necessary overlay infrastructure to display loading
 /// screens on top of your app content. It must be used to wrap your app for
-/// the [HzLoadingScreen] to function properly.
+/// the [HzLoading] to function properly.
 ///
 /// ## Required Setup
 ///
@@ -93,7 +93,7 @@ class HzLoadingInitializer extends StatefulWidget {
   /// UI elements.
   ///
   /// The child will be displayed normally when no loading screen is active,
-  /// and will be overlaid by the loading screen when [HzLoadingScreen.show]
+  /// and will be overlaid by the loading screen when [HzLoading.show]
   /// is called.
   final Widget child;
 

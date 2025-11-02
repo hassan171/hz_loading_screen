@@ -12,8 +12,8 @@ import 'package:hz_loading_screen/hz_loading_screen.dart';
 /// ## Internal Use Only
 ///
 /// This widget is used internally by [HzLoadingInitializer] and should not
-/// be used directly in your app code. Use [HzLoadingScreen.show] and
-/// [HzLoadingScreen.hide] instead.
+/// be used directly in your app code. Use [HzLoading.show] and
+/// [HzLoading.hide] instead.
 ///
 /// ## Features
 ///
@@ -26,7 +26,7 @@ import 'package:hz_loading_screen/hz_loading_screen.dart';
 /// ## Architecture
 ///
 /// The widget uses a [ValueListenableBuilder] to listen for changes in
-/// [HzLoadingScreen.data] and rebuilds the UI accordingly. When the loading
+/// [HzLoading.data] and rebuilds the UI accordingly. When the loading
 /// screen is not visible, it returns [SizedBox.shrink] to minimize overhead.
 class HzLoadingWidget extends StatelessWidget {
   /// Creates a new [HzLoadingWidget].
@@ -37,7 +37,7 @@ class HzLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<HzLoadingData>(
-      valueListenable: HzLoadingScreen.data,
+      valueListenable: HzLoading.data,
       builder: (context, value, child) {
         // If not visible, return empty widget for performance
         if (value.isVisible == false) return const SizedBox.shrink();
@@ -48,12 +48,13 @@ class HzLoadingWidget extends StatelessWidget {
           child: Center(
             child: Container(
               padding: value.padding ?? const EdgeInsets.all(16),
-              decoration: value.decoration ??
-                  BoxDecoration(
-                    // Show white background only when text is present
-                    color: value.text == null ? Colors.transparent : Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              decoration: value.text != null || value.textBuilder != null || (value.showDecoration ?? false)
+                  ? value.decoration ??
+                      BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      )
+                  : null,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -77,7 +78,7 @@ class HzLoadingWidget extends StatelessWidget {
                                     // Remove tap highlight effect
                                     overlayColor: WidgetStateProperty.all(Colors.transparent),
                                     onTap: () {
-                                      HzLoadingScreen.hide();
+                                      HzLoading.hide();
                                       value.onClosed?.call();
                                     },
                                     child: Icon(
@@ -114,14 +115,38 @@ class HzLoadingWidget extends StatelessWidget {
                         valueListenable: value.progress!,
                         builder: (context, progressValue, child) {
                           return value.progressBuilder?.call(progressValue) ??
-                              Text(
-                                '(${progressValue.toStringAsFixed(0)}%)',
-                                style: value.progressTextStyle ??
-                                    const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                              );
+                              (value.useLinearProgress ?? false
+                                  ? Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        SizedBox(
+                                          width: 200,
+                                          child: LinearProgressIndicator(
+                                            value: progressValue / 100,
+                                            color: value.progressColor ?? Colors.blue,
+                                            backgroundColor: Colors.grey.withAlpha(100),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          '${progressValue.toStringAsFixed(0)}%',
+                                          style: value.progressTextStyle ??
+                                              const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                      ],
+                                    )
+                                  : Text(
+                                      '(${progressValue.toStringAsFixed(0)}%)',
+                                      style: value.progressTextStyle ??
+                                          const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                    ));
                         },
                       ),
                   ],

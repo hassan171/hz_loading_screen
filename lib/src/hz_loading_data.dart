@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hz_loading_screen/src/hz_loading_config.dart';
 
 /// Configuration class for customizing the appearance and behavior of the loading screen.
 ///
@@ -190,6 +191,22 @@ class HzLoadingData {
   /// Defaults to `true`.
   bool? showProgressIndicator;
 
+  /// Whether to show the decoration around the loading content.
+  ///
+  /// When set to `true`, the decoration (background container) will be shown
+  /// even when there's no text. When `false`, the decoration is only shown
+  /// when text is present.
+  /// Defaults to `false`.
+  bool? showDecoration;
+
+  /// Whether to show progress as a linear progress indicator instead of text.
+  ///
+  /// When set to `true`, progress will be displayed as a LinearProgressIndicator.
+  /// When `false` or `null`, progress will be displayed as text percentage.
+  /// Only applies when [progress] is provided and [progressBuilder] is not used.
+  /// Defaults to `false`.
+  bool? useLinearProgress;
+
   /// Creates a new [HzLoadingData] instance with the specified configuration.
   ///
   /// All parameters are optional and have sensible defaults. You can customize
@@ -214,7 +231,7 @@ class HzLoadingData {
   /// )
   /// ```
   HzLoadingData({
-    this.isVisible = true,
+    this.isVisible = false,
     this.withTimer = true,
     this.duration,
     this.onClosed,
@@ -232,5 +249,123 @@ class HzLoadingData {
     this.textStyle,
     this.progressTextStyle,
     this.showProgressIndicator,
+    this.showDecoration,
+    this.useLinearProgress,
   });
+
+  /// Creates a new [HzLoadingData] instance with default configuration applied.
+  ///
+  /// This factory constructor applies the global default values from
+  /// [HzLoadingConfig.instance] to any properties that are not explicitly provided.
+  ///
+  /// Individual parameters will still override the defaults when specified.
+  ///
+  /// ## Example
+  ///
+  /// Using global defaults:
+  /// ```dart
+  /// // Assumes you've configured HzLoadingConfig.instance.defaultText = 'Please wait...'
+  /// HzLoadingData.withDefaults() // Will use 'Please wait...' as text
+  /// ```
+  ///
+  /// Overriding specific values:
+  /// ```dart
+  /// HzLoadingData.withDefaults(
+  ///   text: 'Custom text', // Overrides the default text
+  ///   progressColor: Colors.red, // Overrides the default progress color
+  /// )
+  /// ```
+  factory HzLoadingData.withDefaults({
+    bool? isVisible,
+    bool? withTimer,
+    Duration? duration,
+    Function? onClosed,
+    String? text,
+    Widget Function(String title)? textBuilder,
+    ValueListenable<int>? progress,
+    Color? materialColor,
+    EdgeInsetsGeometry? padding,
+    BoxDecoration? decoration,
+    Widget Function()? progressIndicatorBuilder,
+    Color? progressColor,
+    IconData? closeIcon,
+    Color? closeIconColor,
+    Widget Function(int progress)? progressBuilder,
+    TextStyle? textStyle,
+    TextStyle? progressTextStyle,
+    bool? showProgressIndicator,
+    bool? showDecoration,
+    bool? useLinearProgress,
+  }) {
+    final config = HzLoadingConfig.instance;
+
+    return HzLoadingData(
+      isVisible: isVisible ?? false,
+      withTimer: withTimer ?? config.withTimer ?? true,
+      duration: duration ?? config.displayDuration,
+      onClosed: onClosed ?? config.onClosed,
+      text: text ?? config.defaultText,
+      textBuilder: textBuilder ?? config.textBuilder,
+      progress: progress,
+      materialColor: materialColor ?? config.materialColor,
+      padding: padding ?? config.padding,
+      decoration: decoration ?? config.decoration,
+      progressIndicatorBuilder: progressIndicatorBuilder ?? config.progressIndicatorBuilder,
+      progressColor: progressColor ?? config.progressColor,
+      closeIcon: closeIcon ?? config.closeIcon,
+      closeIconColor: closeIconColor ?? config.closeIconColor,
+      progressBuilder: progressBuilder ?? config.progressBuilder,
+      textStyle: textStyle ?? config.textStyle,
+      progressTextStyle: progressTextStyle ?? config.progressTextStyle,
+      showProgressIndicator: showProgressIndicator ?? config.showProgressIndicator,
+      showDecoration: showDecoration ?? config.showDecoration,
+      useLinearProgress: useLinearProgress ?? config.useLinearProgress,
+    );
+  }
+
+  HzLoadingData copyWith({
+    bool? isVisible,
+    bool? withTimer,
+    Duration? duration,
+    Function? onClosed,
+    String? text,
+    Widget Function(String title)? textBuilder,
+    ValueListenable<int>? progress,
+    Color? materialColor,
+    EdgeInsetsGeometry? padding,
+    BoxDecoration? decoration,
+    Widget Function()? progressIndicatorBuilder,
+    Color? progressColor,
+    IconData? closeIcon,
+    Color? closeIconColor,
+    Widget Function(int progress)? progressBuilder,
+    TextStyle? textStyle,
+    TextStyle? progressTextStyle,
+    bool? showProgressIndicator,
+    bool? showDecoration,
+    bool? useLinearProgress,
+  }) {
+    return HzLoadingData(
+      isVisible: isVisible ?? this.isVisible,
+      withTimer: withTimer ?? this.withTimer,
+      duration: duration ?? this.duration,
+      onClosed: onClosed ?? this.onClosed,
+      text: text ?? this.text,
+      textBuilder: textBuilder ?? this.textBuilder,
+      progress: progress ?? this.progress,
+      materialColor: materialColor ?? this.materialColor,
+      padding: padding ?? this.padding,
+      decoration: decoration ?? this.decoration,
+      progressIndicatorBuilder: progressIndicatorBuilder ?? this.progressIndicatorBuilder,
+      progressColor: progressColor ?? this.progressColor,
+      closeIcon: closeIcon ?? this.closeIcon,
+      closeIconColor: closeIconColor ?? this.closeIconColor,
+      progressBuilder: progressBuilder ?? this.progressBuilder,
+      textStyle: textStyle ?? this.textStyle,
+      progressTextStyle: progressTextStyle ?? this.progressTextStyle,
+      showProgressIndicator: showProgressIndicator ?? this.showProgressIndicator,
+      showDecoration: showDecoration ?? this.showDecoration,
+      useLinearProgress: useLinearProgress ?? this.useLinearProgress,
+    );
+  }
 }

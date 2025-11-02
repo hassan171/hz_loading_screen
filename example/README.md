@@ -58,7 +58,7 @@ This example runs on all Flutter-supported platforms:
 
 ```dart
 void _simpleLoading() async {
-  HzLoadingScreen.show(HzLoadingData(
+  HzLoading.show(HzLoadingData(
     text: 'Loading, please wait...',
     withTimer: false,
     materialColor: Colors.black.withAlpha(100),
@@ -70,7 +70,7 @@ void _simpleLoading() async {
 
   await Future.delayed(const Duration(seconds: 3));
 
-  HzLoadingScreen.hide();
+  HzLoading.hide();
 }
 ```
 
@@ -78,7 +78,7 @@ void _simpleLoading() async {
 
 ```dart
 void _customLoading() async {
-  HzLoadingScreen.show(HzLoadingData(
+  HzLoading.show(HzLoadingData(
     text: 'Custom Loading...',
     progressIndicatorBuilder: () {
       return CircularProgressIndicator(
@@ -109,7 +109,7 @@ void _customLoading() async {
 
   await Future.delayed(const Duration(seconds: 4));
 
-  HzLoadingScreen.hide();
+  HzLoading.hide();
 }
 ```
 
@@ -119,7 +119,7 @@ void _customLoading() async {
 void _progressLoading() async {
   ValueNotifier<int> progress = ValueNotifier<int>(0);
 
-  HzLoadingScreen.show(HzLoadingData(
+  HzLoading.show(HzLoadingData(
     text: 'Loading with progress...',
     progress: progress,
     withTimer: false,
@@ -136,7 +136,7 @@ void _progressLoading() async {
     progress.value = i;
   }
 
-  HzLoadingScreen.hide();
+  HzLoading.hide();
   progress.dispose(); // Don't forget to dispose!
 }
 ```
@@ -147,7 +147,7 @@ void _progressLoading() async {
 void _customProgressBuilder() async {
   ValueNotifier<int> progress = ValueNotifier<int>(0);
 
-  HzLoadingScreen.show(HzLoadingData(
+  HzLoading.show(HzLoadingData(
     text: 'Loading with progress...',
     progress: progress,
     withTimer: false,
@@ -186,7 +186,7 @@ void _customProgressBuilder() async {
     progress.value = i;
   }
 
-  HzLoadingScreen.hide();
+  HzLoading.hide();
   progress.dispose();
 }
 ```
@@ -210,13 +210,13 @@ MaterialApp(
 
 ```dart
 // Show loading
-HzLoadingScreen.show(HzLoadingData(/* configuration */));
+HzLoading.show(HzLoadingData(/* configuration */));
 
 // Perform async work
 await someAsyncOperation();
 
 // Hide loading
-HzLoadingScreen.hide();
+HzLoading.hide();
 ```
 
 ### 3. Error Handling
@@ -225,14 +225,14 @@ Always use try-finally to ensure loading is hidden:
 
 ```dart
 void performOperation() async {
-  HzLoadingScreen.show(HzLoadingData(text: 'Processing...'));
+  HzLoading.show(HzLoadingData(text: 'Processing...'));
 
   try {
     await riskyOperation();
   } catch (e) {
     showErrorDialog(e.toString());
   } finally {
-    HzLoadingScreen.hide(); // Always hide loading
+    HzLoading.hide(); // Always hide loading
   }
 }
 ```
@@ -245,10 +245,10 @@ Remember to dispose progress notifiers:
 ValueNotifier<int> progress = ValueNotifier<int>(0);
 
 try {
-  HzLoadingScreen.show(HzLoadingData(progress: progress));
+  HzLoading.show(HzLoadingData(progress: progress));
   // ... use progress
 } finally {
-  HzLoadingScreen.hide();
+  HzLoading.hide();
   progress.dispose(); // Clean up
 }
 ```
@@ -270,7 +270,7 @@ The example demonstrates these customization features:
 
 1. Ensure `HzLoadingInitializer` wraps your app
 2. Check that `isVisible` is `true` (default)
-3. Verify you're calling `HzLoadingScreen.show()`
+3. Verify you're calling `HzLoading.show()`
 
 ### Progress Not Updating
 
@@ -280,7 +280,7 @@ The example demonstrates these customization features:
 
 ### Memory Leaks
 
-1. Always call `HzLoadingScreen.hide()` in finally blocks
+1. Always call `HzLoading.hide()` in finally blocks
 2. Dispose `ValueNotifier` instances when done
 3. Use timer-based close buttons for user control
 
