@@ -229,6 +229,6 @@ class HzLoading {
   /// - Safe to call even if loading screen is not visible
   /// - Will trigger any [onClosed] callback if the loading was dismissed by user interaction
   static void hide() {
-    data.value = HzLoadingData(isVisible: false);
+    data.value = data.value.copyWith(isVisible: false);
   }
 }
