@@ -59,3 +59,5 @@ export 'src/hz_loading_screen.dart';
 export 'src/hz_loading_initializer.dart';
 export 'src/hz_loading_data.dart';
 export 'src/hz_loading_config.dart';
+export 'src/hz_loading_animation.dart';
+export 'src/hz_loading_position.dart';

@@ -415,6 +415,35 @@ void main() {
       expect(dataWithLinearProgressNull.useLinearProgress, null);
     });
 
+    test('HzLoadingData animation parameters', () {
+      final dataWithAnimations = HzLoadingData(
+        entranceAnimation: HzLoadingAnimation.scale,
+        exitAnimation: HzLoadingAnimation.fade,
+        animationDuration: Duration(milliseconds: 500),
+        animationCurve: Curves.bounceOut,
+      );
+
+      expect(dataWithAnimations.entranceAnimation, HzLoadingAnimation.scale);
+      expect(dataWithAnimations.exitAnimation, HzLoadingAnimation.fade);
+      expect(dataWithAnimations.animationDuration, Duration(milliseconds: 500));
+      expect(dataWithAnimations.animationCurve, Curves.bounceOut);
+    });
+
+    test('HzLoadingAnimation enum default values', () {
+      // Test default durations
+      expect(HzLoadingAnimation.fade.defaultDuration, Duration(milliseconds: 250));
+      expect(HzLoadingAnimation.scale.defaultDuration, Duration(milliseconds: 200));
+      expect(HzLoadingAnimation.slideUp.defaultDuration, Duration(milliseconds: 300));
+      expect(HzLoadingAnimation.rotation.defaultDuration, Duration(milliseconds: 500));
+      expect(HzLoadingAnimation.none.defaultDuration, Duration.zero);
+
+      // Test default curves
+      expect(HzLoadingAnimation.fade.defaultCurve, Curves.easeInOut);
+      expect(HzLoadingAnimation.scale.defaultCurve, Curves.easeOutBack);
+      expect(HzLoadingAnimation.slideUp.defaultCurve, Curves.easeOutCubic);
+      expect(HzLoadingAnimation.none.defaultCurve, Curves.linear);
+    });
+
     testWidgets('Multiple show calls update configuration', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -547,6 +576,10 @@ void main() {
       expect(config.withTimer, null);
       expect(config.showDecoration, null);
       expect(config.useLinearProgress, null);
+      expect(config.entranceAnimation, null);
+      expect(config.exitAnimation, null);
+      expect(config.animationDuration, null);
+      expect(config.animationCurve, null);
       expect(config.onClosed, null);
     });
 
@@ -562,6 +595,10 @@ void main() {
       config.withTimer = false;
       config.showDecoration = true;
       config.useLinearProgress = true;
+      config.entranceAnimation = HzLoadingAnimation.scale;
+      config.exitAnimation = HzLoadingAnimation.fade;
+      config.animationDuration = Duration(milliseconds: 400);
+      config.animationCurve = Curves.bounceOut;
       config.onClosed = onClosed;
 
       expect(config.displayDuration, duration);
@@ -571,6 +608,10 @@ void main() {
       expect(config.withTimer, false);
       expect(config.showDecoration, true);
       expect(config.useLinearProgress, true);
+      expect(config.entranceAnimation, HzLoadingAnimation.scale);
+      expect(config.exitAnimation, HzLoadingAnimation.fade);
+      expect(config.animationDuration, Duration(milliseconds: 400));
+      expect(config.animationCurve, Curves.bounceOut);
       expect(config.onClosed, onClosed);
     });
 
@@ -704,6 +745,72 @@ void main() {
 
       // Should use the configured defaults
       expect(find.text('Config Text'), findsOneWidget);
+    });
+
+    test('HzLoadingData supports auto-dismiss parameters', () {
+      final data = HzLoadingData(
+        autoHideOnComplete: true,
+        autoHideDelay: const Duration(seconds: 2),
+        maxDuration: const Duration(minutes: 1),
+        onAutoHide: () {},
+      );
+
+      expect(data.autoHideOnComplete, true);
+      expect(data.autoHideDelay, const Duration(seconds: 2));
+      expect(data.maxDuration, const Duration(minutes: 1));
+      expect(data.onAutoHide, isNotNull);
+    });
+
+    test('HzLoadingConfig supports auto-dismiss defaults', () {
+      final config = HzLoadingConfig.instance;
+
+      config.autoHideOnComplete = true;
+      config.autoHideDelay = const Duration(milliseconds: 500);
+      config.maxDuration = const Duration(seconds: 30);
+      config.onAutoHide = () {};
+
+      expect(config.autoHideOnComplete, true);
+      expect(config.autoHideDelay, const Duration(milliseconds: 500));
+      expect(config.maxDuration, const Duration(seconds: 30));
+      expect(config.onAutoHide, isNotNull);
+
+      // Reset for other tests
+      config.reset();
+    });
+
+    test('HzLoadingData.withDefaults applies auto-dismiss config defaults', () {
+      // Configure defaults
+      HzLoadingConfig.instance
+        ..autoHideOnComplete = true
+        ..autoHideDelay = const Duration(seconds: 1)
+        ..maxDuration = const Duration(minutes: 2);
+
+      final data = HzLoadingData.withDefaults();
+
+      expect(data.autoHideOnComplete, true);
+      expect(data.autoHideDelay, const Duration(seconds: 1));
+      expect(data.maxDuration, const Duration(minutes: 2));
+
+      // Reset for other tests
+      HzLoadingConfig.instance.reset();
+    });
+
+    test('HzLoadingData.copyWith supports auto-dismiss parameters', () {
+      final original = HzLoadingData(
+        text: 'Original',
+        autoHideOnComplete: false,
+      );
+
+      final copied = original.copyWith(
+        autoHideOnComplete: true,
+        autoHideDelay: const Duration(seconds: 3),
+        maxDuration: const Duration(minutes: 5),
+      );
+
+      expect(copied.text, 'Original'); // Unchanged
+      expect(copied.autoHideOnComplete, true); // Changed
+      expect(copied.autoHideDelay, const Duration(seconds: 3)); // Changed
+      expect(copied.maxDuration, const Duration(minutes: 5)); // Changed
     });
   });
 }

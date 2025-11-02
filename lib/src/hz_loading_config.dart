@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hz_loading_screen/src/hz_loading_animation.dart';
+import 'package:hz_loading_screen/src/hz_loading_position.dart';
 
 /// Global configuration class for Hz Loading Screen default values.
 ///
@@ -211,6 +213,50 @@ class HzLoadingConfig {
   /// ```
   bool? useLinearProgress;
 
+  /// Default entrance animation for loading screens.
+  ///
+  /// Defines how loading screens should animate when appearing.
+  /// If null, uses the hardcoded default of [HzLoadingAnimation.fade].
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.entranceAnimation = HzLoadingAnimation.scale;
+  /// ```
+  HzLoadingAnimation? entranceAnimation;
+
+  /// Default exit animation for loading screens.
+  ///
+  /// Defines how loading screens should animate when disappearing.
+  /// If null, uses the same animation as [entranceAnimation] in reverse.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.exitAnimation = HzLoadingAnimation.fade;
+  /// ```
+  HzLoadingAnimation? exitAnimation;
+
+  /// Default animation duration for loading screen transitions.
+  ///
+  /// Controls how long the show/hide animations take to complete.
+  /// If null, uses the animation's default duration.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.animationDuration = Duration(milliseconds: 400);
+  /// ```
+  Duration? animationDuration;
+
+  /// Default animation curve for loading screen transitions.
+  ///
+  /// Controls the easing function used for animations.
+  /// If null, uses the animation's default curve.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.animationCurve = Curves.easeOutBack;
+  /// ```
+  Curve? animationCurve;
+
   /// Default callback function for when loading is closed by user.
   ///
   /// This will be called for all loading screens that don't specify
@@ -276,6 +322,159 @@ class HzLoadingConfig {
   /// ```
   Widget Function(int progress)? progressBuilder;
 
+  /// Default setting for backdrop blur effect.
+  ///
+  /// When set to `true`, the content behind the loading screen will be blurred.
+  /// If null, uses the hardcoded default of `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.enableBackdropBlur = true;
+  /// ```
+  bool? enableBackdropBlur;
+
+  /// Default sigma value for backdrop blur effect.
+  ///
+  /// Controls the intensity of the blur effect. Higher values create more blur.
+  /// Only applies when [enableBackdropBlur] is `true`.
+  /// If null, uses the hardcoded default of `5.0`.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.backdropBlurSigma = 10.0;
+  /// ```
+  double? backdropBlurSigma;
+
+  /// Default setting for backdrop filter effect.
+  ///
+  /// When enabled, allows applying various filter effects to the background.
+  /// If null, uses the hardcoded default of `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.enableBackdropFilter = true;
+  /// ```
+  bool? enableBackdropFilter;
+
+  /// Default color filter for backdrop effect.
+  ///
+  /// Allows applying color transformations to the background content.
+  /// Only applies when [enableBackdropFilter] is `true`.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.backdropColorFilter = ColorFilter.mode(
+  ///   Colors.blue.withOpacity(0.2),
+  ///   BlendMode.overlay,
+  /// );
+  /// ```
+  ColorFilter? backdropColorFilter;
+
+  /// Default position for loading screens.
+  ///
+  /// Controls where loading screens appear on the screen by default.
+  /// If null, uses the hardcoded default of [HzLoadingPosition.center].
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.position = HzLoadingPosition.top;
+  /// ```
+  HzLoadingPosition? position;
+
+  /// Default custom alignment for loading screens when position is custom.
+  ///
+  /// Only applies when [position] is set to [HzLoadingPosition.custom].
+  /// If null, uses [Alignment.center] as fallback.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance
+  ///   ..position = HzLoadingPosition.custom
+  ///   ..customAlignment = Alignment.topRight;
+  /// ```
+  Alignment? customAlignment;
+
+  /// Default margin around loading screen content.
+  ///
+  /// Adds spacing between the loading screen and screen edges by default.
+  /// If null, no default margin is applied.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.margin = EdgeInsets.all(20);
+  /// ```
+  EdgeInsets? margin;
+
+  /// Default maximum width constraint for loading screen content.
+  ///
+  /// Limits how wide the loading screen content can be by default.
+  /// If null, no width constraint is applied.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.maxWidth = 320;
+  /// ```
+  double? maxWidth;
+
+  /// Default maximum height constraint for loading screen content.
+  ///
+  /// Limits how tall the loading screen content can be by default.
+  /// If null, no height constraint is applied.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.maxHeight = 240;
+  /// ```
+  double? maxHeight;
+
+  /// Default setting for auto-hiding when progress reaches 100%.
+  ///
+  /// When set to `true`, loading screens will automatically dismiss themselves
+  /// when progress reaches 100%. Only applies when progress is provided.
+  /// If null, uses the hardcoded default of `false`.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.autoHideOnComplete = true;
+  /// ```
+  bool? autoHideOnComplete;
+
+  /// Default delay before auto-hiding after progress completion.
+  ///
+  /// Applied after progress reaches 100% and [autoHideOnComplete] is `true`.
+  /// If null, loading screens will hide immediately upon completion.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.autoHideDelay = Duration(milliseconds: 500);
+  /// ```
+  Duration? autoHideDelay;
+
+  /// Default callback for when loading screens auto-hide.
+  ///
+  /// Called when loading screens automatically dismiss due to progress
+  /// completion or maximum duration timeout.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.onAutoHide = () {
+  ///   print('Loading completed automatically');
+  /// };
+  /// ```
+  Function? onAutoHide;
+
+  /// Default maximum duration before forcing loading screens to hide.
+  ///
+  /// After this time, loading screens will automatically dismiss regardless
+  /// of progress or other conditions. Acts as a safety mechanism.
+  /// If null, no maximum duration is enforced.
+  ///
+  /// Example:
+  /// ```dart
+  /// HzLoadingConfig.instance.maxDuration = Duration(minutes: 2);
+  /// ```
+  Duration? maxDuration;
+
   /// Resets all configuration values to their defaults (null).
   ///
   /// This will cause the hardcoded defaults to be used again.
@@ -299,10 +498,27 @@ class HzLoadingConfig {
     withTimer = null;
     showDecoration = null;
     useLinearProgress = null;
+    entranceAnimation = null;
+    exitAnimation = null;
+    animationDuration = null;
+    animationCurve = null;
     onClosed = null;
     progressIndicatorBuilder = null;
     textBuilder = null;
     progressBuilder = null;
+    enableBackdropBlur = null;
+    backdropBlurSigma = null;
+    enableBackdropFilter = null;
+    backdropColorFilter = null;
+    position = null;
+    customAlignment = null;
+    margin = null;
+    maxWidth = null;
+    maxHeight = null;
+    autoHideOnComplete = null;
+    autoHideDelay = null;
+    onAutoHide = null;
+    maxDuration = null;
   }
 
   /// Creates a copy of the current configuration.
@@ -334,10 +550,27 @@ class HzLoadingConfig {
     copy.withTimer = withTimer;
     copy.showDecoration = showDecoration;
     copy.useLinearProgress = useLinearProgress;
+    copy.entranceAnimation = entranceAnimation;
+    copy.exitAnimation = exitAnimation;
+    copy.animationDuration = animationDuration;
+    copy.animationCurve = animationCurve;
     copy.onClosed = onClosed;
     copy.progressIndicatorBuilder = progressIndicatorBuilder;
     copy.textBuilder = textBuilder;
     copy.progressBuilder = progressBuilder;
+    copy.enableBackdropBlur = enableBackdropBlur;
+    copy.backdropBlurSigma = backdropBlurSigma;
+    copy.enableBackdropFilter = enableBackdropFilter;
+    copy.backdropColorFilter = backdropColorFilter;
+    copy.position = position;
+    copy.customAlignment = customAlignment;
+    copy.margin = margin;
+    copy.maxWidth = maxWidth;
+    copy.maxHeight = maxHeight;
+    copy.autoHideOnComplete = autoHideOnComplete;
+    copy.autoHideDelay = autoHideDelay;
+    copy.onAutoHide = onAutoHide;
+    copy.maxDuration = maxDuration;
     return copy;
   }
 }
