@@ -85,14 +85,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Configuration Options
 
 **Core Properties:**
+
 - `isVisible`: Control loading screen visibility state
-- `withTimer`: Enable/disable timer-based close button functionality  
+- `withTimer`: Enable/disable timer-based close button functionality
 - `duration`: Configurable delay before close button appears
 - `onClosed`: Callback for user-initiated dismissal events
 - `text`: Display text with full styling support
 - `textBuilder`: Custom widget builder for complex text layouts
 
 **Progress Properties:**
+
 - `progress`: Progress tracking with `ValueListenable<int>` (0-100)
 - `useLinearProgress`: Switch between circular and linear progress indicators
 - `progressBuilder`: Custom progress display widgets
@@ -101,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `progressTextStyle`: Progress text styling options
 
 **Visual Properties:**
+
 - `materialColor`: Background overlay color with transparency support
 - `padding`: Container padding configuration
 - `decoration`: Full `BoxDecoration` styling support
@@ -109,18 +112,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `showProgressIndicator`: Toggle progress indicator visibility
 
 **Animation Properties:**
+
 - `entranceAnimation`: Entry animation type selection
-- `exitAnimation`: Exit animation type selection  
+- `exitAnimation`: Exit animation type selection
 - `animationDuration`: Custom animation timing
 - `animationCurve`: Animation easing curves
 
 **Backdrop Properties:**
+
 - `enableBackdropBlur`: Toggle background blur effect
 - `backdropBlurSigma`: Blur intensity control (1.0-20.0)
 - `enableBackdropFilter`: Toggle color filter effects
 - `backdropColorFilter`: Custom color filter configuration
 
 **Position Properties:**
+
 - `position`: Screen positioning (center, top, bottom, custom)
 - `customAlignment`: Precise alignment for custom positioning
 - `margin`: Spacing around loading content
@@ -128,12 +134,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `maxHeight`: Maximum height constraint
 
 **Auto-dismiss Properties:**
+
 - `autoHideOnComplete`: Auto-hide when progress reaches 100%
 - `autoHideDelay`: Delay before hiding after completion
 - `onAutoHide`: Callback for automatic dismissal events
 - `maxDuration`: Safety timeout for maximum loading duration
 
 **Interactive Properties:**
+
 - `closeIcon`: Custom close button icon
 - `closeIconColor`: Close button color customization
 
@@ -163,6 +171,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 📱 Example Usage
 
 #### Basic Setup
+
 ```dart
 MaterialApp(
   builder: (context, child) => HzLoadingInitializer(child: child!),
@@ -170,6 +179,7 @@ MaterialApp(
 ```
 
 #### Global Configuration
+
 ```dart
 HzLoading.instance
   ..materialColor = Colors.black.withAlpha(120)
@@ -180,6 +190,7 @@ HzLoading.instance
 ```
 
 #### Simple Loading
+
 ```dart
 HzLoading.show(HzLoadingData(text: 'Loading...'));
 await operation();
@@ -187,6 +198,7 @@ HzLoading.hide();
 ```
 
 #### Auto-dismiss with Progress
+
 ```dart
 ValueNotifier<int> progress = ValueNotifier<int>(0);
 HzLoading.show(HzLoadingData(
@@ -199,6 +211,7 @@ HzLoading.show(HzLoadingData(
 ```
 
 #### Advanced Styling
+
 ```dart
 HzLoading.show(HzLoadingData(
   text: 'Stylized Loading',
@@ -210,6 +223,7 @@ HzLoading.show(HzLoadingData(
 ```
 
 #### Custom Progress with flutter_spinkit
+
 ```dart
 // Add flutter_spinkit: ^5.2.2 to pubspec.yaml
 import 'package:flutter_spinkit/flutter_spinkit.dart';

@@ -5,12 +5,14 @@ A highly customizable and feature-rich Flutter package for displaying overlay lo
 ## ✨ Features
 
 ### Core Functionality
+
 - **🌐 Global Access**: Show/hide loading screens from anywhere without context
 - **⚙️ EasyLoading-style Configuration**: Instance-based global configuration system
 - **📱 Overlay System**: Non-intrusive overlay that preserves navigation state
 - **🎯 Auto-dismiss**: Smart auto-hide on progress completion or timeout
 
 ### Visual Customization
+
 - **🎨 Highly Customizable**: Colors, text, decorations, blur effects, and positioning
 - **✨ 8 Animation Types**: Fade, scale, slide, rotation animations for entrance/exit
 - **📍 Flexible Positioning**: Center, top, bottom, or custom positioning with alignment
@@ -18,6 +20,7 @@ A highly customizable and feature-rich Flutter package for displaying overlay lo
 - **📏 Layout Controls**: Margin, max width/height constraints for responsive design
 
 ### Progress & Interaction
+
 - **📊 Dual Progress Modes**: Circular and linear progress indicators
 - **⏱️ Timer-based Close**: Auto-appearing close button after specified duration
 - **🚀 Smart Auto-dismiss**: Automatic hiding on completion with optional delay
@@ -25,6 +28,7 @@ A highly customizable and feature-rich Flutter package for displaying overlay lo
 - **📞 Callback Support**: onClosed and onAutoHide event handlers
 
 ### Developer Experience
+
 - **📖 Comprehensive Documentation**: Detailed API docs and examples
 - **🧪 Fully Tested**: 35+ comprehensive tests covering all features
 - **🎮 Interactive Showcase**: Complete demo app with live controls
@@ -380,75 +384,75 @@ Configuration class for customizing the loading screen appearance and behavior.
 
 #### Core Properties
 
-| Property                   | Type                       | Description                           | Default                       |
-| -------------------------- | -------------------------- | ------------------------------------- | ----------------------------- |
-| `isVisible`                | `bool`                     | Whether the loading screen is visible | `true`                        |
-| `withTimer`                | `bool`                     | Show close button after duration      | `true`                        |
-| `duration`                 | `Duration?`                | Time before close button appears      | `Duration(seconds: 2)`        |
-| `onClosed`                 | `Function?`                | Callback when loading is closed       | `null`                        |
-| `text`                     | `String?`                  | Loading text to display               | `null`                        |
-| `textBuilder`              | `Widget Function(String)?` | Custom text widget builder            | `null`                        |
-| `progress`                 | `ValueListenable<int>?`    | Progress value notifier (0-100)       | `null`                        |
+| Property      | Type                       | Description                           | Default                |
+| ------------- | -------------------------- | ------------------------------------- | ---------------------- |
+| `isVisible`   | `bool`                     | Whether the loading screen is visible | `true`                 |
+| `withTimer`   | `bool`                     | Show close button after duration      | `true`                 |
+| `duration`    | `Duration?`                | Time before close button appears      | `Duration(seconds: 2)` |
+| `onClosed`    | `Function?`                | Callback when loading is closed       | `null`                 |
+| `text`        | `String?`                  | Loading text to display               | `null`                 |
+| `textBuilder` | `Widget Function(String)?` | Custom text widget builder            | `null`                 |
+| `progress`    | `ValueListenable<int>?`    | Progress value notifier (0-100)       | `null`                 |
 
 #### Visual Styling
 
-| Property                   | Type                    | Description                           | Default                       |
-| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
-| `materialColor`            | `Color?`                | Background overlay color              | `Colors.black.withAlpha(150)` |
-| `padding`                  | `EdgeInsetsGeometry?`   | Container padding                     | `EdgeInsets.all(16)`          |
-| `decoration`               | `BoxDecoration?`        | Container decoration                  | Auto-generated                |
-| `progressColor`            | `Color?`                | Progress indicator color              | `Colors.blue`                 |
-| `closeIcon`                | `IconData?`             | Close button icon                     | `Icons.close`                 |
-| `closeIconColor`           | `Color?`                | Close button color                    | `Colors.blue`                 |
-| `textStyle`                | `TextStyle?`            | Text styling                          | Default style                 |
-| `progressTextStyle`        | `TextStyle?`            | Progress text styling                 | Default style                 |
-| `showProgressIndicator`    | `bool?`                 | Show/hide progress indicator          | `true`                        |
-| `showDecoration`           | `bool?`                 | Show decoration without text          | `false`                       |
-| `useLinearProgress`        | `bool?`                 | Use linear instead of circular        | `false`                       |
+| Property                | Type                  | Description                    | Default                       |
+| ----------------------- | --------------------- | ------------------------------ | ----------------------------- |
+| `materialColor`         | `Color?`              | Background overlay color       | `Colors.black.withAlpha(150)` |
+| `padding`               | `EdgeInsetsGeometry?` | Container padding              | `EdgeInsets.all(16)`          |
+| `decoration`            | `BoxDecoration?`      | Container decoration           | Auto-generated                |
+| `progressColor`         | `Color?`              | Progress indicator color       | `Colors.blue`                 |
+| `closeIcon`             | `IconData?`           | Close button icon              | `Icons.close`                 |
+| `closeIconColor`        | `Color?`              | Close button color             | `Colors.blue`                 |
+| `textStyle`             | `TextStyle?`          | Text styling                   | Default style                 |
+| `progressTextStyle`     | `TextStyle?`          | Progress text styling          | Default style                 |
+| `showProgressIndicator` | `bool?`               | Show/hide progress indicator   | `true`                        |
+| `showDecoration`        | `bool?`               | Show decoration without text   | `false`                       |
+| `useLinearProgress`     | `bool?`               | Use linear instead of circular | `false`                       |
 
 #### Animation Properties
 
-| Property                   | Type                    | Description                           | Default                       |
-| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
-| `entranceAnimation`        | `HzLoadingAnimation?`   | Entry animation type                  | `HzLoadingAnimation.fade`     |
-| `exitAnimation`            | `HzLoadingAnimation?`   | Exit animation type                   | Same as entrance              |
-| `animationDuration`        | `Duration?`             | Animation duration                    | `250ms`                       |
-| `animationCurve`           | `Curve?`                | Animation easing curve                | `Curves.easeInOut`            |
+| Property            | Type                  | Description            | Default                   |
+| ------------------- | --------------------- | ---------------------- | ------------------------- |
+| `entranceAnimation` | `HzLoadingAnimation?` | Entry animation type   | `HzLoadingAnimation.fade` |
+| `exitAnimation`     | `HzLoadingAnimation?` | Exit animation type    | Same as entrance          |
+| `animationDuration` | `Duration?`           | Animation duration     | `250ms`                   |
+| `animationCurve`    | `Curve?`              | Animation easing curve | `Curves.easeInOut`        |
 
 #### Backdrop Effects
 
-| Property                   | Type                    | Description                           | Default                       |
-| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
-| `enableBackdropBlur`       | `bool?`                 | Apply background blur                 | `false`                       |
-| `backdropBlurSigma`        | `double?`               | Blur intensity (1.0-20.0)            | `5.0`                         |
-| `enableBackdropFilter`     | `bool?`                 | Apply color filter to background      | `false`                       |
-| `backdropColorFilter`      | `ColorFilter?`          | Color filter for background           | `null`                        |
+| Property               | Type           | Description                      | Default |
+| ---------------------- | -------------- | -------------------------------- | ------- |
+| `enableBackdropBlur`   | `bool?`        | Apply background blur            | `false` |
+| `backdropBlurSigma`    | `double?`      | Blur intensity (1.0-20.0)        | `5.0`   |
+| `enableBackdropFilter` | `bool?`        | Apply color filter to background | `false` |
+| `backdropColorFilter`  | `ColorFilter?` | Color filter for background      | `null`  |
 
 #### Position & Layout
 
-| Property                   | Type                    | Description                           | Default                       |
-| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
-| `position`                 | `HzLoadingPosition?`    | Screen position                       | `HzLoadingPosition.center`    |
-| `customAlignment`          | `Alignment?`            | Custom alignment (when position=custom)| `Alignment.center`           |
-| `margin`                   | `EdgeInsets?`           | Margin around content                 | `null`                        |
-| `maxWidth`                 | `double?`               | Maximum width constraint              | `null`                        |
-| `maxHeight`                | `double?`               | Maximum height constraint             | `null`                        |
+| Property          | Type                 | Description                             | Default                    |
+| ----------------- | -------------------- | --------------------------------------- | -------------------------- |
+| `position`        | `HzLoadingPosition?` | Screen position                         | `HzLoadingPosition.center` |
+| `customAlignment` | `Alignment?`         | Custom alignment (when position=custom) | `Alignment.center`         |
+| `margin`          | `EdgeInsets?`        | Margin around content                   | `null`                     |
+| `maxWidth`        | `double?`            | Maximum width constraint                | `null`                     |
+| `maxHeight`       | `double?`            | Maximum height constraint               | `null`                     |
 
 #### Auto-dismiss Features
 
-| Property                   | Type                    | Description                           | Default                       |
-| -------------------------- | ----------------------- | ------------------------------------- | ----------------------------- |
-| `autoHideOnComplete`       | `bool?`                 | Auto-hide when progress reaches 100%  | `false`                       |
-| `autoHideDelay`            | `Duration?`             | Delay before hiding after completion  | `null`                        |
-| `onAutoHide`               | `Function?`             | Callback when auto-hidden             | `null`                        |
-| `maxDuration`              | `Duration?`             | Force hide after timeout              | `null`                        |
+| Property             | Type        | Description                          | Default |
+| -------------------- | ----------- | ------------------------------------ | ------- |
+| `autoHideOnComplete` | `bool?`     | Auto-hide when progress reaches 100% | `false` |
+| `autoHideDelay`      | `Duration?` | Delay before hiding after completion | `null`  |
+| `onAutoHide`         | `Function?` | Callback when auto-hidden            | `null`  |
+| `maxDuration`        | `Duration?` | Force hide after timeout             | `null`  |
 
 #### Custom Builders
 
-| Property                   | Type                       | Description                           | Default                       |
-| -------------------------- | -------------------------- | ------------------------------------- | ----------------------------- |
-| `progressIndicatorBuilder` | `Widget Function()?`       | Custom progress indicator (supports flutter_spinkit) | `CircularProgressIndicator`   |
-| `progressBuilder`          | `Widget Function(int)?`    | Custom progress display               | Default percentage text       |
+| Property                   | Type                    | Description                                          | Default                     |
+| -------------------------- | ----------------------- | ---------------------------------------------------- | --------------------------- |
+| `progressIndicatorBuilder` | `Widget Function()?`    | Custom progress indicator (supports flutter_spinkit) | `CircularProgressIndicator` |
+| `progressBuilder`          | `Widget Function(int)?` | Custom progress display                              | Default percentage text     |
 
 #### Factory Methods
 
@@ -555,7 +559,7 @@ flutter run
 ```dart
 Future<void> downloadFile() async {
   ValueNotifier<int> progress = ValueNotifier<int>(0);
-  
+
   HzLoading.show(HzLoadingData(
     text: 'Downloading file...',
     progress: progress,
@@ -743,8 +747,9 @@ HzLoading.show(HzLoadingData(
 ```
 
 #### Popular flutter_spinkit Options:
+
 - `SpinKitWave` - Wave animation
-- `SpinKitFadingCircle` - Fading circle animation  
+- `SpinKitFadingCircle` - Fading circle animation
 - `SpinKitRotatingCircle` - Rotating circle
 - `SpinKitThreeBounce` - Three bouncing dots
 - `SpinKitCubeGrid` - Cube grid animation
@@ -829,7 +834,7 @@ Future<void> loadData() async {
 // ✅ Auto-dismiss with progress
 Future<void> uploadFile() async {
   ValueNotifier<int> progress = ValueNotifier<int>(0);
-  
+
   HzLoading.show(HzLoadingData.withDefaults(
     text: 'Uploading...',
     progress: progress,
