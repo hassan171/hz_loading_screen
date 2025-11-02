@@ -14,8 +14,8 @@ A customizable and easy-to-use Flutter package for displaying overlay loading sc
 
 ## Screenshots
 
-| Simple Loading | Custom Loading | Progress Loading |
-|---------------|---------------|-----------------|
+| Simple Loading                    | Custom Loading                    | Progress Loading                      |
+| --------------------------------- | --------------------------------- | ------------------------------------- |
 | ![Simple](screenshots/simple.png) | ![Custom](screenshots/custom.png) | ![Progress](screenshots/progress.png) |
 
 ## Getting Started
@@ -180,26 +180,26 @@ Configuration class for customizing the loading screen appearance and behavior.
 
 #### Properties
 
-| Property | Type | Description | Default |
-|----------|------|-------------|---------|
-| `isVisible` | `bool` | Whether the loading screen is visible | `true` |
-| `withTimer` | `bool` | Show close button after duration | `true` |
-| `duration` | `Duration?` | Time before close button appears | `Duration(seconds: 2)` |
-| `onClosed` | `Function?` | Callback when loading is closed | `null` |
-| `text` | `String?` | Loading text to display | `null` |
-| `textBuilder` | `Widget Function(String)?` | Custom text widget builder | `null` |
-| `progress` | `ValueListenable<int>?` | Progress value notifier (0-100) | `null` |
-| `materialColor` | `Color?` | Background overlay color | `Colors.black.withAlpha(150)` |
-| `padding` | `EdgeInsetsGeometry?` | Container padding | `EdgeInsets.all(16)` |
-| `decoration` | `BoxDecoration?` | Container decoration | Auto-generated |
-| `progressIndicatorBuilder` | `Widget Function()?` | Custom progress indicator | `CircularProgressIndicator` |
-| `progressColor` | `Color?` | Progress indicator color | `Colors.blue` |
-| `closeIcon` | `IconData?` | Close button icon | `Icons.close` |
-| `closeIconColor` | `Color?` | Close button color | `Colors.blue` |
-| `progressBuilder` | `Widget Function(int)?` | Custom progress display | Default percentage text |
-| `textStyle` | `TextStyle?` | Text styling | Default style |
-| `progressTextStyle` | `TextStyle?` | Progress text styling | Default style |
-| `showProgressIndicator` | `bool?` | Show/hide progress indicator | `true` |
+| Property                   | Type                       | Description                           | Default                       |
+| -------------------------- | -------------------------- | ------------------------------------- | ----------------------------- |
+| `isVisible`                | `bool`                     | Whether the loading screen is visible | `true`                        |
+| `withTimer`                | `bool`                     | Show close button after duration      | `true`                        |
+| `duration`                 | `Duration?`                | Time before close button appears      | `Duration(seconds: 2)`        |
+| `onClosed`                 | `Function?`                | Callback when loading is closed       | `null`                        |
+| `text`                     | `String?`                  | Loading text to display               | `null`                        |
+| `textBuilder`              | `Widget Function(String)?` | Custom text widget builder            | `null`                        |
+| `progress`                 | `ValueListenable<int>?`    | Progress value notifier (0-100)       | `null`                        |
+| `materialColor`            | `Color?`                   | Background overlay color              | `Colors.black.withAlpha(150)` |
+| `padding`                  | `EdgeInsetsGeometry?`      | Container padding                     | `EdgeInsets.all(16)`          |
+| `decoration`               | `BoxDecoration?`           | Container decoration                  | Auto-generated                |
+| `progressIndicatorBuilder` | `Widget Function()?`       | Custom progress indicator             | `CircularProgressIndicator`   |
+| `progressColor`            | `Color?`                   | Progress indicator color              | `Colors.blue`                 |
+| `closeIcon`                | `IconData?`                | Close button icon                     | `Icons.close`                 |
+| `closeIconColor`           | `Color?`                   | Close button color                    | `Colors.blue`                 |
+| `progressBuilder`          | `Widget Function(int)?`    | Custom progress display               | Default percentage text       |
+| `textStyle`                | `TextStyle?`               | Text styling                          | Default style                 |
+| `progressTextStyle`        | `TextStyle?`               | Progress text styling                 | Default style                 |
+| `showProgressIndicator`    | `bool?`                    | Show/hide progress indicator          | `true`                        |
 
 ### HzLoadingInitializer
 
@@ -207,9 +207,9 @@ Widget that initializes the loading system. Must wrap your app.
 
 #### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `child` | `Widget` | Your app widget |
+| Property | Type     | Description     |
+| -------- | -------- | --------------- |
+| `child`  | `Widget` | Your app widget |
 
 ## Examples
 
@@ -282,7 +282,7 @@ HzLoadingScreen.show(HzLoadingData(
 ```dart
 void loadData() async {
   HzLoadingScreen.show(HzLoadingData(text: 'Loading...'));
-  
+
   try {
     await apiCall();
   } catch (e) {
@@ -318,5 +318,6 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes.
 If you find this package helpful, please give it a ⭐ on GitHub!
 
 For issues and feature requests, please use the [GitHub issue tracker](https://github.com/yourusername/hz_loading_screen/issues).
-#   h z _ l o a d i n g _ s c r e e n  
+#   h z * l o a d i n g * s c r e e n 
+ 
  
